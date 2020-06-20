@@ -1,3 +1,5 @@
+from datetime import datetime
+
 #Listas para guardar los valores tokenizados
 articulos=[]
 preposiciones=[]
@@ -8,7 +10,6 @@ sinClasificar=[]
 
 #-----------------------------------------------------------------------------------------------------------#
 def obtenerFechaActual():
-    from datetime import datetime
     now = datetime.now()
     fechaFormato=str(now.day)+"-"+str(now.month)+"-"+str(now.year)+"-"+str(now.hour)+"-"+str(now.minute)+"-"+str(now.second)
 
@@ -17,11 +18,8 @@ def obtenerFechaActual():
 #-----------------------------------------------------------------------------------------------------------#
 def generarHTML(cadena):
     nombreArchivo ="Análisis-"+obtenerFechaActual()+".html"
-    #     <tr>
-    #   <th>Number</th>
-    #   <th>Square</th>
-    # </tr>
-    html_top = """
+
+    textoHTML = """
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -60,30 +58,15 @@ def generarHTML(cadena):
           font-size: 15px;
           color: white;
           width: 100%;
-          margin: 0;
-          top:0;
-          left:0;
-        }
-
-        section {
-          display: -webkit-flex;
-          display: flex;
         }
 
         article {
-          -webkit-flex: 3;
-          -ms-flex: 3;
-          flex: 3;
           background-color: #fff;
-          padding: 10px;
+          padding-left: 10px
+          width: 90%;
+         
         }
 
-        @media (max-width: 1000px) {
-          section {
-            -webkit-flex-direction: column;
-            flex-direction: column;
-          }
-        }
       </style>
     </head>
     <body>
@@ -94,82 +77,157 @@ def generarHTML(cadena):
         <p>Jose Altamirano Salazar</p>
         <p>Josue Brenes Alfaro</p>
       </header>
-
+      <center>
       <section>
         <article>
           <h1>Contenido Analizado</h1>
           <p>
     """
+    textoHTML = textoHTML + cadena
+    textoHTML = textoHTML + """ 
+        </p>
+        <hr>
+        <h1>Analisis del documento</h1>
+        <table>
+          <tr>
+            <th>Articulos</th>
+            <th>Preposiciones</th>
+            <th>Pronombres</th>
+            <th>Verbos</th>
+            <th>Numeros</th>
+            <th>Sin Clasificar</th>
+          </tr>
+        """
+    indice=0
+    finArticulos=False
+    finPreposiciones=False
+    finPronombres=False
+    finVerbos=False
+    finNumeros=False
+    finSinClasificar=False
 
-    html_bottom = """ 
-         </p>
-      <hr>
-      <h1>Análisis del documento</h1>
-      <table>
-        <tr>
-          <th>Articulos</th>
-          <th>Preposiciones</th>
-          <th>Pronombres</th>
-          <th>Verbos</th>
-          <th>Numeros</th>
-          <th>Sin Clasificar</th>
-        </tr>
-        <tr>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
+    while(True):
+      textoHTML=textoHTML+"<tr>"
+      
+      if(indice<len(articulos)):
+        textoHTML=textoHTML+"<td><p>"+str(articulos[indice])+"</p></td>"
+      else:
+        textoHTML=textoHTML+"<td></td>"
+        finArticulos=True
+
+      if(indice<len(preposiciones)):
+        textoHTML=textoHTML+"<td><p>"+str(preposiciones[indice])+"</p></td>"
+      else:
+        textoHTML=textoHTML+"<td></td>"
+        finPreposiciones=True
+
+      if(indice<len(pronombres)):
+        textoHTML=textoHTML+"<td><p>"+str(pronombres[indice])+"</p></td>"
+      else:
+        textoHTML=textoHTML+"<td></td>"
+        finPronombres=True
+
+      if(indice<len(verbos)):
+        textoHTML=textoHTML+"<td><p>"+str(verbos[indice])+"</p></td>"
+      else:
+        textoHTML=textoHTML+"<td></td>"
+        finVerbos=True
+
+      if(indice<len(numeros)):
+        textoHTML=textoHTML+"<td><p>"+str(numeros[indice])+"</p></td>"
+      else:
+        textoHTML=textoHTML+"<td></td>"
+        finNumeros=True
+
+      if(indice<len(sinClasificar)):
+        textoHTML=textoHTML+"<td><p>"+str(sinClasificar[indice])+"</p></td>"
+      else:
+        textoHTML=textoHTML+"<td></td>"
+        finSinClasificar=True
+
+      textoHTML=textoHTML+"</tr>"
+      indice+=1
+
+      if (finArticulos==True and finPreposiciones==True and finPronombres==True and finVerbos==True and finNumeros==True and finSinClasificar==True):
+        break
+
+      finArticulos=False
+      finPreposiciones=False
+      finPronombres=False
+      finVerbos=False
+      finNumeros=False
+      finSinClasificar=False
+
+    textoHTML = textoHTML + """ 
+        </table>
+
+        <h1>Analisis del documento</h1>
+        <table>
+          <tr>
+            <th>Articulos</th>
+            <th>Preposiciones</th>
+            <th>Pronombres</th>
+            <th>Verbos</th>
+          </tr>
+        """
+
+    indice=0
+    finArticulos=False
+    finPreposiciones=False
+    finPronombres=False
+    finVerbos=False
+
+    while(True):
+      textoHTML=textoHTML+"<tr>"
+      
+      if(indice<len(articulos)):
+        textoHTML=textoHTML+"<td><p>"+str(articulos[indice])+"</p></td>"
+      else:
+        textoHTML=textoHTML+"<td></td>"
+        finArticulos=True
+
+      if(indice<len(preposiciones)):
+        textoHTML=textoHTML+"<td><p>"+str(preposiciones[indice])+"</p></td>"
+      else:
+        textoHTML=textoHTML+"<td></td>"
+        finPreposiciones=True
+
+      if(indice<len(pronombres)):
+        textoHTML=textoHTML+"<td><p>"+str(pronombres[indice])+"</p></td>"
+      else:
+        textoHTML=textoHTML+"<td></td>"
+        finPronombres=True
+
+      if(indice<len(verbos)):
+        textoHTML=textoHTML+"<td><p>"+str(verbos[indice])+"</p></td>"
+      else:
+        textoHTML=textoHTML+"<td></td>"
+        finVerbos=True
+
+      textoHTML=textoHTML+"</tr>"
+      indice+=1
+
+      if (finArticulos==True and finPreposiciones==True and finPronombres==True and finVerbos==True):
+        break
+
+      finArticulos=False
+      finPreposiciones=False
+      finPronombres=False
+      finVerbos=False
+
+    textoHTML = textoHTML +  """        
       </table>
 
-      <h1>Analisis del documento</h1>
-      <table>
-        <tr>
-          <th>Articulos</th>
-          <th>Preposiciones</th>
-          <th>Pronombres</th>
-          <th>Verbos</th>
-        </tr>
-        <tr>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-        <tr>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-          <td> </td>
-        </tr>
-      </table>
-
-    </article>
-  </section>
-
-</body>
-</html>
-"""
-    html_text=cadena
-    
-##    html_rows=""
-##
-##    for elemento in articulos:
-##        html_rows=html_rows+"<tr><td><p>"+str(elemento)+"</p></td></tr>"
+      </article>
+      </section>
+      </center>
+      </body>
+      </html>
+      """
 
     try:
-        Html_file= open(nombreArchivo,"x")
-        Html_file.write(html_top+html_text+html_bottom)
+        Html_file = open(nombreArchivo,"x")
+        Html_file.write(textoHTML)
         Html_file.close()
         return 1
     except:
@@ -242,6 +300,8 @@ def eliminarDuplicados(lista):
         nuevaLista=nuevaLista+[lista[indice1]]
 
       indice+=1
+
+      #lista = list(set())
 
     return nuevaLista
 
