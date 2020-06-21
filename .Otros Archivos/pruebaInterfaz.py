@@ -1,20 +1,40 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import pyqtSlot
+from PyQt5 import uic, QtWidgets
+from tkinter import filedialog
+from tkinter import *
 
-def window():
-   app = QApplication(sys.argv)
-   widget = QWidget()
+qtCreatorFile = "pp2_gui.ui" 
 
-   textLabel = QLabel(widget)
-   textLabel.setText("Hello World!")
-   textLabel.move(110,85)
+Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 
-   widget.setGeometry(50,50,320,200)
-   widget.setWindowTitle("PyQt5 Example")
-   widget.show()
-   sys.exit(app.exec_())
+class Tokenization(QtWidgets.QMainWindow, Ui_MainWindow):
+    def __init__(self):
+        QtWidgets.QMainWindow.__init__(self)
+        Ui_MainWindow.__init__(self)
+        self.setupUi(self)
+        
+        self.btnAbrirArchivo.clicked.connect(self.leerArchivoTxt)
+        self.btnLimpiarTexto.clicked.connect(self.limpiarCampoTexto)
+        self.btnTokenizar.clicked.connect(self.leerArchivoTxt)
 
-if __name__ == '__main__':
-   window()
+    def leerArchivoTxt(self):
+        rutaArchivo= filedialog.askopenfilename(initialdir = "/",
+                                      title = "Select file",
+                                      filetypes = (("Text files", 
+                                                    "*.txt*"), 
+                                                   ("all files", 
+                                                    "*.*"))) 
+        txt_file = open(rutaArchivo,"r")
+        cadena = txt_file.read()
+        txt_file.close()
+        self.textEdit.setText(cadena)
+
+    def limpiarCampoTexto(self):
+        cadena = ""
+        self.textEdit.setText(cadena)
+
+if __name__ == "__main__":
+    app =  QtWidgets.QApplication(sys.argv)
+    window = Tokenization()
+    window.show()
+    sys.exit(app.exec_())
