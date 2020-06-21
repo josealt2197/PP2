@@ -1,8 +1,8 @@
 import sys
-from PyQt5 import uic, QtWidgets
-from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog
-from PyQt5.QtGui import QIcon
-from tkinter import filedialog
+from PyQt5 import uic, QtWidgets, QtGui, QtCore
+from PyQt5.QtWidgets import QApplication, QFileDialog, QMessageBox
+from PyQt5.QtGui import QIcon 
+# from tkinter import filedialog
 from datetime import datetime
 
 qtCreatorFile = "pp2_gui.ui" 
@@ -27,22 +27,19 @@ class Tokenization(QtWidgets.QMainWindow, Ui_MainWindow):
         self.btnAbrirArchivo.clicked.connect(self.leerArchivoTxt)
         self.btnLimpiarTexto.clicked.connect(self.limpiarCampoTexto)
         self.btnTokenizar.clicked.connect(self.tokenizar)
-        self.btnGenerarHTML.clicked.connect(self.generarHTML)
+        self.btnGenerarHTML.clicked.connect(self.confirmarGenerarHTML)
+
     #-----------------------------------------------------------------------------------------------------------#
     def leerArchivoTxt(self):
         global cadena
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        rutaArchivo, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","Text files (*.txt);;All Files (*)", options=options)
-        # = filedialog.askopenfilename(initialdir = "/",
-        #                               title = "Select file",
-        #                               filetypes = (("Text files", 
-        #                                             "*.txt*"), 
-        #                                            ("all files", 
-        #                                             "*.*"))) 
+        rutaArchivo, _ = QFileDialog.getOpenFileName(self,"Abrir archivo de texto", "","Text files (*.txt);;All Files (*)", options=options)
         txt_file = open(rutaArchivo,"r")
         cadena = txt_file.read()
         txt_file.close()
+        self.limpiarCampoTexto()
+        self.reiniciarValores()
         self.textEdit.setText(cadena)
 
     #-----------------------------------------------------------------------------------------------------------#
@@ -50,6 +47,15 @@ class Tokenization(QtWidgets.QMainWindow, Ui_MainWindow):
         cadena = ""
         self.textEdit.setText(cadena)
 
+    #-----------------------------------------------------------------------------------------------------------#
+    def reiniciarValores(self):
+        articulos=[]
+        preposiciones=[]
+        pronombres=[]
+        verbos=[]
+        numeros=[]
+        sinClasificar=[]
+        cadena=""
     #-----------------------------------------------------------------------------------------------------------#
     def obtenerFechaActual(self):
         now = datetime.now()
@@ -272,11 +278,27 @@ class Tokenization(QtWidgets.QMainWindow, Ui_MainWindow):
             Html_file = open(nombreArchivo,"x")
             Html_file.write(textoHTML)
             Html_file.close()
-            print("\n-->Archivo HTML generado exitosamente.")
+            return 1
         except:
-            print("\t*****************************************************")
-            print("\t*Se ha producido un error al generar el archivo HTML*")
-            print("\t*****************************************************")
+            return -1
+
+    #-----------------------------------------------------------------------------------------------------------#
+    def confirmarGenerarHTML(self):
+        eleccion = QtWidgets.QMessageBox.question(self, 'Generar HTML',
+                                            "¿Esta seguro de generar el archivo HTML? \nEste proceso eliminará el texto ingresado",
+                                            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+        
+        if (eleccion == QtWidgets.QMessageBox.Yes):
+            
+            if(self.generarHTML()!=-1):
+
+              informacion = QtWidgets.QMessageBox.information(self, 'Generar HTML',
+                                            "Archivo HTML creado exitosamente.")
+              self.limpiarCampoTexto()
+              self.reiniciarValores()
+        else:
+            advertencia = QtWidgets.QMessageBox.critical(self, 'Generar HTML',
+                                            "Ha ocurrido un error.\nEl archivo HTML NO se ha generado.")
     #-----------------------------------------------------------------------------------------------------------#
     def tokenizar(self):
         global cadena
@@ -324,25 +346,24 @@ class Tokenization(QtWidgets.QMainWindow, Ui_MainWindow):
             return -1
     #-----------------------------------------------------------------------------------------------------------#
     def ordenarLista(self, lista):
-        for k in range(len(lista)):
-            for m in range(len(lista)-1):
-                if lista[m]>lista[m+1]:
-                    lista[m],lista[m+1] = lista[m+1],lista[m]
+        
+        for indice in range(len(lista)):
+            for elemento in range(len(lista)-1):
+                if (lista[elemento]>lista[elemento+1]):
+                    lista[elemento],lista[elemento+1] = lista[elemento+1],lista[elemento]
 
         return lista
 
     #-----------------------------------------------------------------------------------------------------------#
     def tokenizarCadena(self):
         global cadena
-        #Listas para de valores posibles para los elementos
+        #Listas para almacenar valores posibles para los elementos
         listaArticulos=["el", "la", "los", "las", "un", "una", "unos", "unas", "lo", "al", "del"]
         listaPreposiciones=["a", "ante", "bajo", "cabe", "con", "contra", "de", "desde", "durante", "en", "entre", "hacia", "hasta", "mediante", "para", "por", "según", "sin", "so", "sobre", "tras", "versus", "vía"]
         listaPronombres=["yo", "me", "mí", "conmigo", "nosotros", "nosotras", "nos", "tú", "te", "ti", "contigo", "vosotros", "vosotras", "vos", "él", "ella", "se", "consigo", "le", "les","mío", "mía", "míos", "mías", "nuestro", "nuestra", "nuestros", "nuestras", "tuyo", "tuya", "tuyos", "vuestro", "vuestra", "vuestros", "vuestras", "suyo", "suya", "suyos", "suyas"]
 
-
         #Lista con las palabras de la cadena separadas, y sin símbolos
         listaTokenizada = self.eliminarSimbolos().lower().split()
-        print("Despues de lista")
 
         #Recorrer los elemntos de la lista tokenizada y agregarlos a la
         #lista que corresponda cada uno.
@@ -368,5 +389,7 @@ class Tokenization(QtWidgets.QMainWindow, Ui_MainWindow):
 if __name__ == "__main__":
     app =  QtWidgets.QApplication(sys.argv)
     window = Tokenization()
+    window.setWindowIcon(QtGui.QIcon("icon.png"))
+    window.setWindowTitle("Tokenizacion de Texto")
     window.show()
     sys.exit(app.exec_())
