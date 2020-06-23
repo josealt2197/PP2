@@ -1,0 +1,95 @@
+
+    <!DOCTYPE html>
+    <head>
+      <title>Clasificación de Elementos</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <style>
+        *{
+          box-sizing: border-box;
+        }
+
+        body {
+          font-family: Arial, Helvetica, sans-serif;
+        }
+
+        table {
+          border-collapse: collapse;
+          width: 100%;
+        }
+
+        td, th {
+          border: 1px solid #000;
+          text-align: center;
+          padding: 8px;
+        }
+
+        th {
+          background-color: #0288d1;
+          color: #fff;
+        }
+
+        header{
+          background-color: #0288d1;
+          padding: 5px;
+          text-align: center;
+          font-size: 15px;
+          color: white;
+          width: 100%;
+        }
+
+        article {
+          background-color: #fff;
+          padding-left: 10px
+          width: 90%;
+         
+        }
+
+      </style>
+    </head>
+    <body>
+      <header>
+        <h2>Tokenizacion de Cadenas</h2>
+        <h4>Segundo Proyecto Programado</h4>
+        <p>Estudiantes:</p>
+        <p>Jose Altamirano Salazar</p>
+        <p>Josue Brenes Alfaro</p>
+      </header>
+      <center>
+      <section>
+        <article>
+          <h1>Contenido Analizado</h1>
+          <p>
+     
+        </p>
+        <hr>
+        <h1>Analisis del documento (traduccion)</h1>
+        <table>
+          <tr>
+            <th>Articulos</th>
+            <th>Preposiciones</th>
+            <th>Pronombres</th>
+            <th>Verbos</th>
+            <th>Numeros</th>
+            <th>Sin Clasificar</th>
+          </tr>
+        <tr><td><p>al</p></td><td><p>a</p></td><td><p>conmigo</p></td><td><p>comiendo</p></td><td><p>123</p></td><td><p>aaron</p></td></tr><tr><td><p>del</p></td><td><p>ante</p></td><td><p>consigo</p></td><td><p>correr</p></td><td><p>1279.23</p></td><td><p>jose</p></td></tr><tr><td><p>el</p></td><td><p>bajo</p></td><td><p>contigo</p></td><td><p>haciendo</p></td><td><p>23456</p></td><td><p>josue</p></td></tr><tr><td><p>la</p></td><td><p>cabe</p></td><td><p>ella</p></td><td><p>hecho</p></td><td><p>7834</p></td><td><p>kevin</p></td></tr><tr><td><p>las</p></td><td><p>con</p></td><td><p>le</p></td><td><p>mover</p></td><td><p>787278.1</p></td><td><p>l</p></td></tr><tr><td><p>lo</p></td><td><p>contra</p></td><td><p>me</p></td><td><p>remar</p></td><td><p>9304930</p></td><td><p>lesmo</p></td></tr><tr><td><p>los</p></td><td><p>de</p></td><td><p>nos</p></td><td><p>roberto</p></td><td></td><td><p>m</p></td></tr><tr><td><p>un</p></td><td><p>desde</p></td><td><p>nosotras</p></td><td><p>sentado</p></td><td></td><td><p>ma</p></td></tr><tr><td><p>una</p></td><td><p>durante</p></td><td><p>nosotros</p></td><td></td><td></td><td><p>mas</p></td></tr><tr><td><p>unas</p></td><td><p>en</p></td><td><p>nuestra</p></td><td></td><td></td><td><p>mos</p></td></tr><tr><td><p>unos</p></td><td><p>entre</p></td><td><p>nuestras</p></td><td></td><td></td><td><p>segn</p></td></tr><tr><td></td><td><p>hacia</p></td><td><p>nuestro</p></td><td></td><td></td><td><p>t</p></td></tr><tr><td></td><td><p>hasta</p></td><td><p>nuestros</p></td><td></td><td></td><td><p>va</p></td></tr><tr><td></td><td><p>mediante</p></td><td><p>se</p></td><td></td><td></td><td></td></tr><tr><td></td><td><p>para</p></td><td><p>suya</p></td><td></td><td></td><td></td></tr><tr><td></td><td><p>por</p></td><td><p>suyas</p></td><td></td><td></td><td></td></tr><tr><td></td><td><p>sin</p></td><td><p>suyo</p></td><td></td><td></td><td></td></tr><tr><td></td><td><p>so</p></td><td><p>suyos</p></td><td></td><td></td><td></td></tr><tr><td></td><td><p>sobre</p></td><td><p>te</p></td><td></td><td></td><td></td></tr><tr><td></td><td><p>tras</p></td><td><p>ti</p></td><td></td><td></td><td></td></tr><tr><td></td><td><p>versus</p></td><td><p>tuya</p></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td><p>tuyo</p></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td><p>tuyos</p></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td><p>vos</p></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td><p>vosotras</p></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td><p>vosotros</p></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td><p>vuestra</p></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td><p>vuestras</p></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td><p>vuestro</p></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td><p>vuestros</p></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td><p>yo</p></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr> 
+        </table>
+
+        <h1>Analisis del documento</h1>
+        <table>
+          <tr>
+            <th>Articles</th>
+            <th>Prepositions</th>
+            <th>Pronouns</th>
+            <th>Verbs</th>
+          </tr>
+        <tr><td><p>to</p></td><td><p>To</p></td><td><p>me</p></td><td><p>eating</p></td></tr><tr><td><p>from</p></td><td><p>face, in-of</p></td><td><p>"Got you...</p></td><td><p>run</p></td></tr><tr><td><p>the</p></td><td><p>low</p></td><td><p>with you</p></td><td><p>doing</p></td></tr><tr><td><p>the</p></td><td><p>be</p></td><td><p>she&#x0D;</p></td><td><p>fact</p></td></tr><tr><td><p>the</p></td><td><p>with</p></td><td><p>.</p></td><td><p>move</p></td></tr><tr><td><p>relating</p></td><td><p>against</p></td><td><p>.</p></td><td><p>Row</p></td></tr><tr><td><p>X</p></td><td><p>of</p></td><td><p>we</p></td><td><p>ROBERTO</p></td></tr><tr><td><p>a</p></td><td><p>from</p></td><td><p>ABOUT US</p></td><td><p>SITTING</p></td></tr><tr><td><p>as</p></td><td><p>for</p></td><td><p>us</p></td><td></td></tr><tr><td><p>that</p></td><td><p>in</p></td><td><p>the</p></td><td></td></tr><tr><td><p>1s</p></td><td><p>between</p></td><td><p>our</p></td><td></td></tr><tr><td></td><td><p>Towards</p></td><td><p>our</p></td><td></td></tr><tr><td></td><td><p>until</p></td><td><p>our</p></td><td></td></tr><tr><td></td><td><p>via</p></td><td><p>could</p></td><td></td></tr><tr><td></td><td><p>to</p></td><td><p>Yours</p></td><td></td></tr><tr><td></td><td><p>prior</p></td><td><p>theirs</p></td><td></td></tr><tr><td></td><td><p>contactless</p></td><td><p>his</p></td><td></td></tr><tr><td></td><td><p>so</p></td><td><p>Determiner</p></td><td></td></tr><tr><td></td><td><p>about</p></td><td><p>I</p></td><td></td></tr><tr><td></td><td><p>after</p></td><td><p>you</p></td><td></td></tr><tr><td></td><td><p>versus</p></td><td><p>white cedar</p></td><td></td></tr><tr><td></td><td></td><td><p>yours</p></td><td></td></tr><tr><td></td><td></td><td><p>your (pl.)</p></td><td></td></tr><tr><td></td><td></td><td><p>You (Guatemala, Argentina, Colombia)</p></td><td></td></tr><tr><td></td><td></td><td><p>You</p></td><td></td></tr><tr><td></td><td></td><td><p>you</p></td><td></td></tr><tr><td></td><td></td><td><p>Your</p></td><td></td></tr><tr><td></td><td></td><td><p>Determiner</p></td><td></td></tr><tr><td></td><td></td><td><p>Your</p></td><td></td></tr><tr><td></td><td></td><td><p>Your</p></td><td></td></tr><tr><td></td><td></td><td><p>me</p></td><td></td></tr><tr><td></td><td></td><td></td><td></td></tr>        
+      </table>
+
+      </article>
+      </section>
+      </center>
+      </body>
+      </html>
+      

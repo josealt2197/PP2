@@ -74,9 +74,9 @@
 
 from translate import Translator
 
-def traducir():
-	translator= Translator(to_lang="German")
-	translation = translator.translate("Good Morning!")
+def traducir(cadena):
+	translator= Translator(from_lang="Spanish",to_lang="English")
+	translation = translator.translate(cadena)
 	print(translation)
 
 
