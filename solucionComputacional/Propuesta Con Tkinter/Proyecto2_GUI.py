@@ -12,7 +12,9 @@ pronombres=[]
 verbos=[]
 numeros=[]
 sinClasificar=[]
+recursos=[articulos, preposiciones, pronombres, verbos, numeros, sinClasificar]
 cadenaTexto=""
+abcValido = "abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ1234567890áéíúóüÁÉÍÓÚÜ.,;: "
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
@@ -209,6 +211,30 @@ def generarHTML():
     finPronombres=False
     finVerbos=False
 
+# Primera Ejecucion (Para listas con = tamaño)
+#     funcionRecursiva --> recursos[1] --> recursos(0,0)=recursos[articulos[0]]
+#     funcionRecursiva --> recursos[2] --> recursos(1,0)=recursos[preposiciones[0]]
+#     funcionRecursiva --> recursos[3] --> recursos(2,0)=recursos[pronombres[0]]
+#     funcionRecursiva --> recursos[4] --> recursos(3,0)=recursos[verbos[0]]
+#     funcionRecursiva --> recursos[5] --> recursos(4,0)=recursos[numeros[0]]
+#     funcionRecursiva --> recursos[6] --> recursos(5,0)=recursos[sinClasificar[0]]
+
+# Segunda Ejecucion
+#     funcionRecursiva --> recursos[1] --> recursos(0,1)=recursos[articulos[1]]
+#     funcionRecursiva --> recursos[2] --> recursos(1,1)=recursos[preposiciones[1]]
+#     funcionRecursiva --> recursos[3] --> recursos(2,1)=recursos[pronombres[1]]
+#     funcionRecursiva --> recursos[4] --> recursos(3,1)=recursos[verbos[1]]
+#     funcionRecursiva --> recursos[5] --> recursos(4,1)=recursos[numeros[1]]
+#     funcionRecursiva --> recursos[6] --> recursos(6,1)=recursos[sinClasificar[1]]
+
+
+# generafilas(filas="", x=0, y=0):
+#   global recursos
+#   filas=filas+"<tr>"
+
+#   return generafilas(filas="")
+
+
     while(True):
       textoHTML=textoHTML+"<tr>"
       
@@ -270,32 +296,35 @@ Entradas:Una cadena de caracteres
 Salidas:La misma cadena eliminandole los simbolos que no aparescan en la variable local abcValido
 Restricciones:No valida restricciones
 '''
-def eliminarSimbolos(cadena):
-    abcValido = "abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ1234567890áéíúóüÁÉÍÓÚÜ.,;: "
-    cadenaResultante = ""
-    for caracter in cadena:
-        if(abcValido.find(caracter)!=-1):
-            cadenaResultante = cadenaResultante + caracter
-
+def eliminarSimbolos(cadena=cadenaTexto,cadenaResultante=""):
+    
+    if(cadena==""):
+      return cadenaResultante
+    else:
+        if(abcValido.find(cadena[0])!=-1):
+            return eliminarSimbolosRecursivo(cadena[1:], cadenaResultante+cadena[0])
+        else:
+            return eliminarSimbolosRecursivo(cadena[1:], cadenaResultante)
     return cadenaResultante
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
 Entradas: Una lista con varios elementos y una cadena de caracteres (palabra)
 Salidas: En caso de que se encuentre la palabra buscada dentro de la lista se retorna el valor numerico de la 
-                 posicion en la que esta se encuentra, caso contrario la funcion retorna el valor numerico -1
+         posicion en la que esta se encuentra, caso contrario la funcion retorna el valor numerico -1
 Restricciones: Los valores de la lista deben corresponder con tipo del valor ingresado para la palabra del 
-                             segundo parámetro.
+               segundo parámetro.
 '''
-def buscarElemento(lista, palabra):
-    indice = 0
-
-    while (indice != len(lista)):
-        if (lista[indice] == palabra):
-            return indice
-        indice += 1
-
-    return -1
+def buscarElemento(lista, palabra, posicion=(-1), contador=0):
+    if(posicion!=-1):
+      return posicion
+    elif(contador>=len(lista)):
+      return -1   
+    else:
+        if(lista[contador]==palabra):
+            return buscarElementoRecusivo(lista, palabra, posicion=contador, contador=contador+1)
+        else:
+            return buscarElementoRecusivo(lista, palabra, posicion, contador=contador+1)
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
@@ -312,9 +341,10 @@ def esNumero(n):
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
-Entradas:
-Salidas:
-Restricciones:
+Entradas: Una cadena de caracteres
+Salidas: 1, 2 o 3 en caso de que la cadena ingresada pueda clasificarse como un verbo infinitivo, gerundio
+         o participio
+Restricciones: Ninguna
 '''
 def esVerbo(palabra):
     if (palabra[-2:]=="ar" or palabra[-2:]=="er" or palabra[-2:]=="ir"):
@@ -342,25 +372,19 @@ def ordenarLista(lista):
     return lista
 
 #-----------------------------------------------------------------------------------------------------------#
-#**************************************************Falta Revisar********************************************#
 '''
 Entradas: Una lista con elementos de un mismo tipo
 Salidas:La lista ingresada como parametro, omitiendo los valores que estuvieran repetidos dentro de esta.
 Restricciones:Ninguna
 '''
-def eliminarDuplicados(lista):
-    nuevaLista = []
-    indice=0
-
-    while(indice1 < len(lista)):
-      if(lista[indice1] not in nuevaLista):
-        nuevaLista=nuevaLista+[lista[indice1]]
-
-      indice+=1
-
-      #lista = list(set())
-
-    return nuevaLista
+def eliminarDuplicados(lista,nuevaLista=[]):
+    if (lista==[]):
+        return nuevaLista
+    else:
+        if (buscarElemento(nuevaLista,lista[0])==-1):
+            return eliminarDuplicadosRecursivo(lista[1:],nuevaLista+[lista[0]])
+        else:
+            return eliminarDuplicadosRecursivo(lista[1:],nuevaLista)
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
@@ -378,7 +402,8 @@ def tokenizarCadena():
 
     try:
         #Lista con las palabras de la cadena separadas, y sin símbolos
-        cadenaSinSimbolos = eliminarSimbolos(cadenaTexto).lower()
+        eliminarSimbolos()
+        cadenaSinSimbolos = cadenaTexto.lower()
         listaTokenizada= re.split(" |, |\n",cadenaSinSimbolos)
 
         #Recorrer los elemntos de la lista tokenizada y agregarlos a la
@@ -466,7 +491,7 @@ def confirmarTokenizar():
             listasConcatenadas = "-->Articulos:\n"+str(ordenarLista(articulos))+"\n-->Preposiciones:\n"+str(ordenarLista(preposiciones))+"\n-->Pronombres:\n"+str(ordenarLista(pronombres))+"\n-->Verbos:\n"+str(ordenarLista(verbos))+"\n-->Numero:\n"+str(ordenarLista(numeros))+"\n-->Sin Clasificar:\n"+str(ordenarLista(sinClasificar))
             txtTokens.insert(tk.END, listasConcatenadas)
         else:
-            tkinter.messagebox.showerror("Tokenizar Documento","Ha ocurrido un error.\nEl texto nose ha tokenizado.")
+            tkinter.messagebox.showerror("Tokenizar Documento","Ha ocurrido un error.\nEl texto no se ha tokenizado.")
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
