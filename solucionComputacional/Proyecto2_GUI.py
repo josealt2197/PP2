@@ -1,20 +1,45 @@
 import tkinter as tk
 import tkinter.messagebox
-import re
+from tkinter import ttk
 from tkinter.filedialog import askopenfilename
 from datetime import datetime
 from translate import Translator
 
-#Listas para guardar los valores tokenizados
+#Listas para guardar los valores tokenizados (En Español)
 articulos=[]
 preposiciones=[]
 pronombres=[]
 verbos=[]
 numeros=[]
 sinClasificar=[]
-recursos=[articulos, preposiciones, pronombres, verbos, numeros, sinClasificar]
+
+#Listas para guardar los valores tokenizados (En Inglés)
+articles=[]
+prepositions=[]
+pronouns=[]
+verbs=[]
+
+#Cadena para almacenar texto ingresado en la ventana principal
 cadenaTexto=""
+
+#Caracteres y signos de puntuación permitidos
 abcValido = "abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ1234567890áéíúóüÁÉÍÓÚÜ.,;: "
+
+#-----------------------------------------------------------------------------------------------------------#
+'''
+Entradas: Una lista con todos sus elementos en español
+Salidas: Otra lista con los valores de la lista recibida traducidos de español a ingles
+Restricciones:No valida restricciones
+'''
+def traducirLista(listaEspanol):
+    listaIngles=[]
+
+    tradutor = Translator(from_lang="Spanish",to_lang="English")
+
+    for elemento in listaEspanol:
+      listaIngles.append(tradutor.translate(elemento))
+
+    return listaIngles
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
@@ -22,11 +47,12 @@ Entradas:Una palabra en español
 Salidas:La palabra de entrada, traducida a ingles
 Restricciones:No valida restricciones
 '''
-def traducir(cadena):
+def traducirPalabra(palabra):
     tradutor = Translator(from_lang="Spanish",to_lang="English")
-    traduccion = tradutor.translate(cadena)
+    traduccion = tradutor.translate(palabra)
     
     return traduccion
+
 #-----------------------------------------------------------------------------------------------------------#
 '''
 Entradas:Ninguna
@@ -38,6 +64,7 @@ def obtenerFechaActual():
     fechaFormato=str(now.day)+"-"+str(now.month)+"-"+str(now.year)+"-"+str(now.hour)+"-"+str(now.minute)+"-"+str(now.second)
 
     return fechaFormato
+    
 #-----------------------------------------------------------------------------------------------------------#
 '''
 Entradas:Una cadena de texto 
@@ -46,6 +73,12 @@ Restricciones:No valida restricciones
 '''
 def generarHTML():
     cadena = cadenaTexto
+    filasHTML = ""
+
+    articles = eliminarDuplicados(traducirLista(articulos))
+    prepositions = eliminarDuplicados(traducirLista(preposiciones))
+    pronouns = eliminarDuplicados(traducirLista(pronombres))
+    verbs = eliminarDuplicados(traducirLista(verbos))
 
     nombreArchivo ="Análisis-"+obtenerFechaActual()+".html"
 
@@ -54,7 +87,7 @@ def generarHTML():
     <head>
       <title>Clasificación de Elementos</title>
       <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
       <style>
         *{
           box-sizing: border-box;
@@ -62,17 +95,22 @@ def generarHTML():
 
         body {
           font-family: Arial, Helvetica, sans-serif;
-        }
-
-        table {
-          border-collapse: collapse;
+          background-color: #fff;
           width: 100%;
         }
 
-        td, th {
-          border: 1px solid #000;
+        table{
+          width: 80%;
+        }
+
+        table, th, td {
+          border: 1px solid black;
+          border-collapse: collapse; 
+        }
+
+        th, td {
           text-align: center;
-          padding: 8px;
+          padding: 15px;
         }
 
         th {
@@ -81,39 +119,13 @@ def generarHTML():
         }
 
         tr:nth-child(even){
-          background-color: #0288d1;
-          color: #fff;
-        }
-
-        header{
-          background-color: #0288d1;
-          padding: 5px;
-          text-align: center;
-          font-size: 15px;
-          color: white;
-          width: 100%;
-        }
-
-        article {
-          background-color: #fff;
-          padding-left: 10px
-          width: 90%;
-         
+          background-color: #b3e5fc;
         }
 
       </style>
     </head>
     <body>
-      <header>
-        <h2>Tokenizacion de Cadenas</h2>
-        <h4>Segundo Proyecto Programado</h4>
-        <p>Estudiantes:</p>
-        <p>Jose Altamirano Salazar</p>
-        <p>Josue Brenes Alfaro</p>
-      </header>
       <center>
-      <section>
-        <article>
           <h1>Contenido Analizado</h1>
           <p>
     """
@@ -141,45 +153,45 @@ def generarHTML():
     finSinClasificar=False
 
     while(True):
-      textoHTML=textoHTML+"<tr>"
+      filasHTML=filasHTML+"<tr>"
       
       if(indice<len(articulos)):
-        textoHTML=textoHTML+"<td><p>"+str(articulos[indice])+"</p></td>"
+        filasHTML=filasHTML+"<td><p>"+str(articulos[indice])+"</p></td>"
       else:
-        textoHTML=textoHTML+"<td></td>"
+        filasHTML=filasHTML+"<td></td>"
         finArticulos=True
 
       if(indice<len(preposiciones)):
-        textoHTML=textoHTML+"<td><p>"+str(preposiciones[indice])+"</p></td>"
+        filasHTML=filasHTML+"<td><p>"+str(preposiciones[indice])+"</p></td>"
       else:
-        textoHTML=textoHTML+"<td></td>"
+        filasHTML=filasHTML+"<td></td>"
         finPreposiciones=True
 
       if(indice<len(pronombres)):
-        textoHTML=textoHTML+"<td><p>"+str(pronombres[indice])+"</p></td>"
+        filasHTML=filasHTML+"<td><p>"+str(pronombres[indice])+"</p></td>"
       else:
-        textoHTML=textoHTML+"<td></td>"
+        filasHTML=filasHTML+"<td></td>"
         finPronombres=True
 
       if(indice<len(verbos)):
-        textoHTML=textoHTML+"<td><p>"+str(verbos[indice])+"</p></td>"
+        filasHTML=filasHTML+"<td><p>"+str(verbos[indice])+"</p></td>"
       else:
-        textoHTML=textoHTML+"<td></td>"
+        filasHTML=filasHTML+"<td></td>"
         finVerbos=True
 
       if(indice<len(numeros)):
-        textoHTML=textoHTML+"<td><p>"+str(numeros[indice])+"</p></td>"
+        filasHTML=filasHTML+"<td><p>"+str(numeros[indice])+"</p></td>"
       else:
-        textoHTML=textoHTML+"<td></td>"
+        filasHTML=filasHTML+"<td></td>"
         finNumeros=True
 
       if(indice<len(sinClasificar)):
-        textoHTML=textoHTML+"<td><p>"+str(sinClasificar[indice])+"</p></td>"
+        filasHTML=filasHTML+"<td><p>"+str(sinClasificar[indice])+"</p></td>"
       else:
-        textoHTML=textoHTML+"<td></td>"
+        filasHTML=filasHTML+"<td></td>"
         finSinClasificar=True
 
-      textoHTML=textoHTML+"</tr>"
+      filasHTML=filasHTML+"</tr>"
       indice+=1
 
       if (finArticulos==True and finPreposiciones==True and finPronombres==True and finVerbos==True and finNumeros==True and finSinClasificar==True):
@@ -192,7 +204,7 @@ def generarHTML():
       finNumeros=False
       finSinClasificar=False
 
-    textoHTML = textoHTML + """ 
+    textoHTML = textoHTML + filasHTML[:-63] + """ 
         </table>
 
         <h1>Analisis del documento</h1>
@@ -204,7 +216,7 @@ def generarHTML():
             <th>Verbs</th>
           </tr>
         """
-
+    filasHTML=""
     indice=0
     finArticulos=False
     finPreposiciones=False
@@ -236,33 +248,33 @@ def generarHTML():
 
 
     while(True):
-      textoHTML=textoHTML+"<tr>"
+      filasHTML=filasHTML+"<tr>"
       
-      if(indice<len(articulos)):
-        textoHTML=textoHTML+"<td><p>"+str(traducir(articulos[indice]))+"</p></td>"
+      if(indice<len(articles)):
+        filasHTML=filasHTML+"<td><p>"+str(articles[indice])+"</p></td>"
       else:
-        textoHTML=textoHTML+"<td></td>"
+        filasHTML=filasHTML+"<td></td>"
         finArticulos=True
 
-      if(indice<len(preposiciones)):
-        textoHTML=textoHTML+"<td><p>"+str(traducir(preposiciones[indice]))+"</p></td>"
+      if(indice<len(prepositions)):
+        filasHTML=filasHTML+"<td><p>"+str(prepositions[indice])+"</p></td>"
       else:
-        textoHTML=textoHTML+"<td></td>"
+        filasHTML=filasHTML+"<td></td>"
         finPreposiciones=True
 
-      if(indice<len(pronombres)):
-        textoHTML=textoHTML+"<td><p>"+str(traducir(pronombres[indice]))+"</p></td>"
+      if(indice<len(pronouns)):
+        filasHTML=filasHTML+"<td><p>"+str(pronouns[indice])+"</p></td>"
       else:
-        textoHTML=textoHTML+"<td></td>"
+        filasHTML=filasHTML+"<td></td>"
         finPronombres=True
 
-      if(indice<len(verbos)):
-        textoHTML=textoHTML+"<td><p>"+str(traducir(verbos[indice]))+"</p></td>"
+      if(indice<len(verbs)):
+        filasHTML=filasHTML+"<td><p>"+str(verbs[indice])+"</p></td>"
       else:
-        textoHTML=textoHTML+"<td></td>"
+        filasHTML=filasHTML+"<td></td>"
         finVerbos=True
 
-      textoHTML=textoHTML+"</tr>"
+      filasHTML=filasHTML+"</tr>"
       indice+=1
 
       if (finArticulos==True and finPreposiciones==True and finPronombres==True and finVerbos==True):
@@ -273,11 +285,8 @@ def generarHTML():
       finPronombres=False
       finVerbos=False
 
-    textoHTML = textoHTML +  """        
+    textoHTML = textoHTML + filasHTML[:-63] +  """        
       </table>
-
-      </article>
-      </section>
       </center>
       </body>
       </html>
@@ -315,16 +324,26 @@ Salidas: En caso de que se encuentre la palabra buscada dentro de la lista se re
 Restricciones: Los valores de la lista deben corresponder con tipo del valor ingresado para la palabra del 
                segundo parámetro.
 '''
-def buscarElemento(lista, palabra, posicion=(-1), contador=0):
-    if(posicion!=-1):
-      return posicion
-    elif(contador>=len(lista)):
-      return -1   
-    else:
-        if(lista[contador]==palabra):
-            return buscarElementoRecusivo(lista, palabra, posicion=contador, contador=contador+1)
-        else:
-            return buscarElementoRecusivo(lista, palabra, posicion, contador=contador+1)
+# def buscarElemento(lista, palabra, posicion=(-1), contador=0):
+#     if(posicion!=-1):
+#       return posicion
+#     elif(contador>=len(lista)):
+#       return -1   
+#     else:
+#         if(lista[contador]==palabra):
+#             return buscarElementoRecusivo(lista, palabra, posicion=contador, contador=contador+1)
+#         else:
+#             return buscarElementoRecusivo(lista, palabra, posicion, contador=contador+1)
+
+def buscarElemento(lista, palabra):
+    indice = 0
+
+    while (indice != len(lista)):
+        if (lista[indice] == palabra):
+            return indice
+        indice += 1
+
+    return -1
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
@@ -382,9 +401,18 @@ def eliminarDuplicados(lista,nuevaLista=[]):
         return nuevaLista
     else:
         if (buscarElemento(nuevaLista,lista[0])==-1):
-            return eliminarDuplicadosRecursivo(lista[1:],nuevaLista+[lista[0]])
+            return eliminarDuplicados(lista[1:],nuevaLista+[lista[0]])
         else:
-            return eliminarDuplicadosRecursivo(lista[1:],nuevaLista)
+            return eliminarDuplicados(lista[1:],nuevaLista)
+
+#-----------------------------------------------------------------------------------------------------------#
+# '''
+# Entradas: Una lista con elementos de un mismo tipo
+# Salidas:La lista ingresada como parametro, omitiendo los valores que estuvieran repetidos dentro de esta.
+# Restricciones:Ninguna
+# '''
+# def clasificarElemento(listaClasificacion):
+    
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
@@ -393,6 +421,8 @@ Salidas:Se rellenan los valores de las listas globales con los elementos ingresa
 Restricciones:No valida restricciones
 '''
 def tokenizarCadena():
+    global cadenaTexto
+
     #Listas para de valores posibles para los elementos
     listaArticulos=["el", "la", "los", "las", "un", "una", "unos", "unas", "lo", "al", "del"]
     listaPreposiciones=["a", "ante", "bajo", "cabe", "con", "contra", "de", "desde", "durante", "en", "entre", "hacia", "hasta", "mediante", "para", "por", "según", "sin", "so", "sobre", "tras", "versus", "vía"]
@@ -403,8 +433,8 @@ def tokenizarCadena():
     try:
         #Lista con las palabras de la cadena separadas, y sin símbolos
         eliminarSimbolos()
-        cadenaSinSimbolos = cadenaTexto.lower()
-        listaTokenizada= re.split(" |, |\n",cadenaSinSimbolos)
+        cadenaSinSimbolos = cadenaTexto.lower().replace('\n', ' ')
+        listaTokenizada = cadenaSinSimbolos.split(" ")
 
         #Recorrer los elemntos de la lista tokenizada y agregarlos a la
         #lista que corresponda cada uno.
@@ -427,18 +457,33 @@ def tokenizarCadena():
             else:
                 sinClasificar.append(elemento)
 
-        # articulos = eliminarDuplicados(articulos)
-        # preposiciones = eliminarDuplicados(preposiciones)
-        # pronombres = eliminarDuplicados(pronombres)
-        # verbos = eliminarDuplicados(verbos)
-        # sinClasificar = eliminarDuplicados(sinClasificar)
+            articulos = eliminarDuplicados(articulos)
+            preposiciones = eliminarDuplicados(preposiciones)
+            pronombres = eliminarDuplicados(pronombres)
+            verbos = eliminarDuplicados(verbos)
+            sinClasificar = eliminarDuplicados(sinClasificar)
         
         return 1
 
     except:
         
         return -1
-    
+  
+#-----------------------------------------------------------------------------------------------------------#
+'''
+Entradas:Ninguna
+Salidas:Los valores de las variables globales omitiendo los valores repetidos dentro de estas
+Restricciones: Ninguna
+'''
+def mostrarListasTraducidas():
+    articles = eliminarDuplicados(traducirLista(articulos))
+    prepositions = eliminarDuplicados(traducirLista(preposiciones))
+    pronouns = eliminarDuplicados(traducirLista(pronombres))
+    verbs = eliminarDuplicados(traducirLista(verbos))
+
+    listaTokens.delete(1.0, tk.END)
+    listasConcatenadas = "-->Articles:\n"+str(ordenarLista(articles))+"\n\n-->Prepositions:\n"+str(ordenarLista(prepositions))+"\n\n-->Pronouns:\n"+str(ordenarLista(pronombres))+"\n\n-->Verbs:\n"+str(ordenarLista(verbos))
+    listaTokens.insert(tk.END, listasConcatenadas)     
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
@@ -454,8 +499,17 @@ def reiniciarValores():
     numeros=[]
     sinClasificar=[]
     cadenaTexto=""
+    listaTokens.delete(1.0, tk.END)
+
+#-----------------------------------------------------------------------------------------------------------#
+'''
+Entradas:Ninguna
+Salidas:Elimina el contenido del campo de texto de la venta principal
+Restricciones: Ninguna
+'''
+def reiniciarDocumento():
     txtDocumento.delete(1.0, tk.END)
-    txtTokens.delete(1.0, tk.END)
+
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
@@ -465,9 +519,9 @@ Salidas: Una ventana en la que se confirma el proceso de generar el archivo HTML
 Restricciones:Validar que se hayatokenzado el texto previamente ingresado
 '''
 def confirmarGenerarHTML():
-    result=tk.messagebox.askquestion('Crear HTML','¿Esta seguro de generar el archivo HTML? \nEste proceso eliminará el texto ingresado')
+    resultado=tk.messagebox.askquestion('Crear HTML','¿Esta seguro de generar el archivo HTML? \nEste proceso eliminará el texto ingresado')
 
-    if result=='yes':
+    if resultado=='yes':
 
         if(generarHTML()!=-1):
             tkinter.messagebox.showinfo("Generar HTML","Archivo HTML creado exitosamente.")
@@ -482,16 +536,46 @@ Salidas:Una ventana en la cual pregunta si desea tokenizar lo ingresado en el cu
 Restricciones:Verificar que en el cuadro de texto existan elementos. 
 '''
 def confirmarTokenizar():
-    result=tk.messagebox.askquestion("Tokenizar Documento","¿Esta seguro de tokenizar el texto ingresado?")
+    resultado=tk.messagebox.askquestion("Tokenizar Documento","¿Esta seguro de tokenizar el texto ingresado?")
 
-    if result=='yes':
+    if resultado=='yes':
 
         if(tokenizarCadena()!=-1):
-            txtTokens.delete(1.0, tk.END)
-            listasConcatenadas = "-->Articulos:\n"+str(ordenarLista(articulos))+"\n-->Preposiciones:\n"+str(ordenarLista(preposiciones))+"\n-->Pronombres:\n"+str(ordenarLista(pronombres))+"\n-->Verbos:\n"+str(ordenarLista(verbos))+"\n-->Numero:\n"+str(ordenarLista(numeros))+"\n-->Sin Clasificar:\n"+str(ordenarLista(sinClasificar))
-            txtTokens.insert(tk.END, listasConcatenadas)
+
+            listaTokens.delete(*listaTokens.get_children())
+            listaTokens.insert('', '0', 'documento', text ='Documento')
+
+            listarTokens(articulos, "1", "Articulos")
+            listarTokens(preposiciones, "2", "Preposiciones")
+            listarTokens(pronombres, "3", "Pronombres")
+            listarTokens(verbos, "4", "Verbos")
+            listarTokens(numeros, "5", "Numeros")
+            listarTokens(sinClasificar, "6", "Sin Clasificar")
+
+            #listaTokens.delete(1.0, tk.END)
+            # listasConcatenadas = "-->Articulos:\n"+str(ordenarLista(articulos))+"\n\n-->Preposiciones:\n"+str(ordenarLista(preposiciones))+"\n\n-->Pronombres:\n"+str(ordenarLista(pronombres))+"\n\n-->Verbos:\n"+str(ordenarLista(verbos))+"\n\n-->Numeros:\n"+str(ordenarLista(numeros))+"\n\n-->Sin Clasificar:\n"+str(ordenarLista(sinClasificar))
+            # listaTokens.insert(tk.END, listasConcatenadas)
         else:
             tkinter.messagebox.showerror("Tokenizar Documento","Ha ocurrido un error.\nEl texto no se ha tokenizado.")
+
+#-----------------------------------------------------------------------------------------------------------# 
+'''
+Entradas:Se hace clic sobre el boton con la leyena "Tokenizar".
+Salidas:Una ventana en la cual pregunta si desea tokenizar lo ingresado en el cuadro de texto.
+Restricciones:Verificar que en el cuadro de texto existan elementos. 
+'''
+def listarTokens(lista, posicion, categoria):
+    indice=0
+    nombreElemento=""
+
+    listaTokens.insert('documento', posicion , categoria, text = categoria)  
+
+    while(indice!=len(lista)):
+        nombreElemento = categoria + str(indice)
+        listaTokens.insert(categoria, 'end', nombreElemento , text = str(lista[indice]))
+        indice+=1
+
+
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
@@ -516,9 +600,10 @@ def leerArchivo():
 
 tokenizacion = tk.Tk()
 tokenizacion.title("Tokenizacion de Caracteres")
+tokenizacion.iconbitmap("icon.ico")
 tokenizacion.geometry("950x550")
 tokenizacion.config(bg="gray99")
-tokenizacion.resizable(False,False)
+#tokenizacion.resizable(False,False)
 
 frCompleto = tk.Frame(tokenizacion, bg="gray99")
 frBtnDocumento = tk.Frame(frCompleto, padx=5, pady=5, bg="gray99")
@@ -527,26 +612,32 @@ frBtnLista = tk.Frame(frCompleto, padx=5, pady=5, bg="gray99")
 label1 = tk.Label(frCompleto, text="Documento: ", bg="gray99", fg="#006BE5", font=("Calibri", 12))
 label2 = tk.Label(frCompleto, text="Estructura de Listas: ", bg="gray99", fg="#006BE5", font=("Calibri", 12))
 
-txtTokens = tk.Text(frCompleto, width="30",font=("Calibri", 11), relief=tk.SUNKEN )  
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>#
+listaTokens = ttk.Treeview(frCompleto)   
+
+listaTokens.insert('', '0', 'documento', text ='Documento') 
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>#
+
+#listaTokens = tk.Text(frCompleto, width="30",font=("Calibri", 11), relief=tk.SUNKEN )  
 txtDocumento = tk.Text(frCompleto, width="80", font=("Calibri", 11) )
 
 btnAbrir = tk.Button(frBtnDocumento, text="Abrir Archivo", command=leerArchivo, bg="#0288d1", fg="#ffffff", relief=tk.GROOVE, font=("Calibri", 12) )
-btnLimpiar = tk.Button(frBtnDocumento, text="Limpiar", command=reiniciarValores, bg="#0288d1", fg="#ffffff", relief=tk.GROOVE, font=("Calibri", 12)  )
+btnLimpiar = tk.Button(frBtnDocumento, text="Limpiar", command=reiniciarDocumento, bg="#0288d1", fg="#ffffff", relief=tk.GROOVE, font=("Calibri", 12)  )
 btnAbrir.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
 btnLimpiar.grid(row=0, column=1, sticky="ew", padx=5)
 
 btnTokenizar = tk.Button(frBtnLista, text="Tokenizar", command=confirmarTokenizar, bg="#0288d1", fg="#ffffff", relief=tk.GROOVE, font=("Calibri", 12)  )
-btnTraducir = tk.Button(frBtnLista, text="Traducir", command=traducir, bg="#0288d1", fg="#ffffff", relief=tk.GROOVE, font=("Calibri", 12)  )
+btnTraducir = tk.Button(frBtnLista, text="Traducir", command=mostrarListasTraducidas, bg="#0288d1", fg="#ffffff", relief=tk.GROOVE, font=("Calibri", 12))
 btnTokenizar.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
 btnTraducir.grid(row=0, column=1, sticky="ew", padx=5)
 
-btnHtml = tk.Button(frCompleto, text="Generar HTML", command=confirmarGenerarHTML, bg="#0288d1", fg="#ffffff", relief=tk.GROOVE, font=("Calibri", 12)  )
+btnHtml = tk.Button(frCompleto, text="Generar HTML", command=confirmarGenerarHTML, bg="#0288d1", fg="#ffffff", relief=tk.GROOVE, font=("Calibri", 12))
 
 label1.grid(row=0,column=0, sticky="w", padx=5)
 txtDocumento.grid(row=1, column=0, sticky="w", padx=10)
 frBtnDocumento.grid(row=2, column=0, sticky="se", padx=5, pady=10)
 label2.grid(row=0, column=1, sticky="w", padx=5)
-txtTokens.grid(row=1, column=1, sticky="e", padx=5)
+listaTokens.grid(row=1, column=1, sticky="ns", padx=5)
 frBtnLista.grid(row=2, column=1, sticky="e", padx=5, pady=10)
 btnHtml.grid(row=1, column=2, sticky="n", padx=5)
 
