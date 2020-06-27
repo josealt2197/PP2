@@ -457,11 +457,11 @@ def tokenizarCadena():
             else:
                 sinClasificar.append(elemento)
 
-            articulos = eliminarDuplicados(articulos)
-            preposiciones = eliminarDuplicados(preposiciones)
-            pronombres = eliminarDuplicados(pronombres)
-            verbos = eliminarDuplicados(verbos)
-            sinClasificar = eliminarDuplicados(sinClasificar)
+            # articulos = eliminarDuplicados(articulos)
+            # preposiciones = eliminarDuplicados(preposiciones)
+            # pronombres = eliminarDuplicados(pronombres)
+            # verbos = eliminarDuplicados(verbos)
+            # sinClasificar = eliminarDuplicados(sinClasificar)
         
         return 1
 
