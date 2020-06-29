@@ -1,5 +1,6 @@
 from datetime import datetime
 from translate import Translator
+import re, string
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
@@ -256,17 +257,20 @@ Entradas:Una cadena de caracteres
 Salidas:La misma cadena eliminandole los simbolos que no aparescan en la variable local abcValido
 Restricciones:No valida restricciones
 '''
-def eliminarSimbolos(cadena, cadenaResultante=""):
-    abcValido = "abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ1234567890áéíúóüÁÉÍÓÚÜ. "
-    # abcValido = "abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ1234567890áéíúóüÁÉÍÓÚÜ.,;: "
-    if(cadena==""):
+def validarCaracteres(cadena, cadenaResultante="", indice=0):
+    abcValido = "abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ1234567890áéíúóüÁÉÍÓÚÜ "
+    if(indice>=len(cadena)):
       return cadenaResultante
     else:
-        if(abcValido.find(cadena[0])!=-1):
-            return eliminarSimbolos(cadena[1:], cadenaResultante+cadena[0])
-        else:
-            return eliminarSimbolos(cadena[1:], cadenaResultante)
-    return cadenaResultante
+      if(abcValido.find(cadena[indice])!=-1):
+          return validarCaracteres(cadena, cadenaResultante+cadena[indice], indice+1)
+      # elif(cadena[indice+1:]!=False):
+      #   if(indice==0 and cadena[indice]=="."):
+      #     return eliminarSimbolos(cadena, cadenaResultante, indice+1)
+      #   elif(cadena[indice]=="." and esEntero(cadena[indice-1]) and esEntero(cadena[indice+1])):
+      #     return eliminarSimbolos(cadena, cadenaResultante+cadena[indice], indice+1)
+      else:
+          return validarCaracteres(cadena, cadenaResultante, indice+1)
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
@@ -303,7 +307,20 @@ def buscarElemento(lista, palabra):
 #-----------------------------------------------------------------------------------------------------------#
 '''
 Entradas:Un caracter 
-Salidas:True si el caracter es un numero o False si el caracter no es un numero
+Salidas:True si el caracter es un numero o False si el caracter no es un numero entero
+Restricciones:No valida restricciones
+'''
+def esEntero(caracter):
+    try:
+        resultado = int(caracter)
+        return True
+    except:
+        return False
+
+#-----------------------------------------------------------------------------------------------------------#
+'''
+Entradas:Un caracter 
+Salidas:True si el caracter es un numero o False si el caracter no es un numero con decimales
 Restricciones:No valida restricciones
 '''
 def esNumero(caracter):
@@ -383,7 +400,7 @@ def tokenizarCadena(cadena):
 
     try:
         '''Proceso de tokenizacion
-            1. Eliminar todos los simbolos, menos los signos de puntuacion
+            1. Eliminar todos los simbolos, menos los signos de puntuacion 
             2. Crear una lista con los tokens separados por espacios o signos de signos de puntuacion
                 (se eliminan todos los signos menos los puntos)
             3. Clasificar los tokens que sean numeros, incluidos los decimales, sacarlos de la lista de tokens
@@ -393,12 +410,15 @@ def tokenizarCadena(cadena):
             . --> A o . -->1 . 1 
 
        '''
-        #Lista con las palabras de la cadena separadas, y sin símbolos
-        cadenaSinSimbolos = eliminarSimbolos(cadena)
-        cadenaSinSaltos = cadenaSinSimbolos.lower().replace('\n', ' ')
-        listaTokenizada = cadenaSinSaltos.split(" ")
+       #Lista con las palabras de la cadena separadas, y sin símbolos
+        #cadenaSinSaltos = re.sub('[%s]' % re.escape('\n'),' ',cadena)
+        cadena = cadena.replace("\n", " ")       
+        cadenaSinSimbolos = re.sub('[%s]' % re.escape(string.punctuation),' ',cadena)
+        cadenaSinSimbolos = validarCaracteres(cadena).lower()
+        #cadenaSinSimbolos.replace("\n", " ")
+        listaTokenizada = cadenaSinSimbolos.split(" ")
 
-        #Recorrer los elemntos de la lista tokenizada y agregarlos a la
+        #Recorrer los elementos de la lista tokenizada y agregarlos a la
         #lista que corresponda cada uno.
         for elemento in listaTokenizada:
             if(buscarElemento(listaArticulos, elemento)!=-1):
@@ -425,11 +445,17 @@ def tokenizarCadena(cadena):
         listadoTokens[3]=ordenarLista(eliminarDuplicados(verbos))
         listadoTokens[4]=ordenarLista(eliminarDuplicados(numeros))
         listadoTokens[5]=ordenarLista(eliminarDuplicados(sinClasificar))
-        
+
+        try:
+          listadoTokens[5].remove('')
+        except Exception as e:
+          print(e)
+
+                
         return listadoTokens
 
-    except:
-        
+    except Exception as e:
+        print(e)         
         return ["-1"]
   
 #-----------------------------------------------------------------------------------------------------------#
@@ -439,13 +465,20 @@ Salidas:Los valores de las listas traducidos omitiendo los valores repetidos den
          de numeros y preposiciones
 Restricciones: Ninguna
 '''
-def traducirListas(listaTokens):
-    articles = eliminarDuplicados(traducirLista(listaTokens[0]))
-    prepositions = eliminarDuplicados(traducirLista(listaTokens[1]))
-    pronouns = eliminarDuplicados(traducirLista(listaTokens[2]))
-    verbs = eliminarDuplicados(traducirLista(listaTokens[3]))
+def traducirListas(lista):
+    tokensTraducidos=[[],[],[],[],[]]
+    try:
+      tokensTraducidos[0] = traducirLista(lista[0])
+      tokensTraducidos[1] = traducirLista(lista[1])
+      tokensTraducidos[2] = traducirLista(lista[2])
+      tokensTraducidos[3] = traducirLista(lista[3])
 
-    return [ordenarLista(articles)]+[ordenarLista(prepositions)]+[ordenarLista(pronouns)]+[ordenarLista(verbs)]    
+      return tokensTraducidos
+
+    except Exception as e:
+        print(e) 
+        return ["-1"] 
+
 
 #-----------------------------------------------------------------------------------------------------------#
 '''

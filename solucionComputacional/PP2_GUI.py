@@ -9,8 +9,6 @@ from tkinter.filedialog import askopenfilename
 listaTokens=[]
 txtDocumento=""
 treeViewTokens=""
-btnTokenizar=""
-btnTraducir=""
 btnGenerarHtml=""
 ventanaTokenizacion=""
 
@@ -55,8 +53,6 @@ def reiniciarValores():
     txtDocumento.configure(state="normal")
     txtDocumento.delete(0.0, END)
 
-    btnTokenizar.config(state="disabled")
-    btnTraducir.config(state="disabled")
     btnGenerarHtml.config(state="disabled")
 
 #-----------------------------------------------------------------------------------------------------------#
@@ -83,8 +79,6 @@ def comandoReiniciarDocumento():
     global btnTokenizar
     global btnTraducir
 
-    btnTokenizar.config(state="disabled")
-    btnTraducir.config(state="disabled") 
     txtDocumento.configure(state="normal")
     txtDocumento.delete(0.0, END)
 
@@ -104,11 +98,9 @@ def comandoLeerArchivo():
     if not rutaArchivo:
         return
     texto = LDN.leerArchivoTxt(rutaArchivo)
-    txtDocumento.configure(state="normal")
     txtDocumento.delete(0.0, END)
     txtDocumento.insert(END, texto)
-    btnTokenizar.config(state="normal")
-    btnTraducir.config(state="disabled")
+
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
@@ -122,25 +114,29 @@ def comandoTraducirTokens():
     tokensTraducidos = []
 
     titulos=["Articles","Prepositions","Pronouns","Verbs"]
+    
+    if (txtDocumento.compare("end-1c","==","1.0")):
+      messagebox.showwarning("Texto Vacío","NO se ha ingresado ningún texto para ser tokenizado")
+    else:
+      resultado=messagebox.askquestion('Traducir Tokens','¿Desea traducir los Tokens extraidos del documento?')
 
-    resultado=messagebox.askquestion('Traducir Tokens','¿Desea traducir los Tokens extraidos del documento?')
+      if resultado=='yes':
+          
+          reiniciarTokens()
 
-    if resultado=='yes':
-        
-        reiniciarTokens()
-        tokensTraducidos=LDN.traducirListas(listaTokens)
+          tokensTraducidos=LDN.traducirListas(LDN.tokenizarCadena(txtDocumento.get(0.0, END)))
 
-        if(tokensTraducidos!=[]):
+          if(tokensTraducidos[0]!="-1"):
 
-            treeViewTokens.delete(*treeViewTokens.get_children())
-            treeViewTokens.insert('', '0', 'documento', text ='Documento')
+              treeViewTokens.delete(*treeViewTokens.get_children())
+              treeViewTokens.insert('', '0', 'documento', text ='Documento')
 
-            for indice in range(0,len(tokensTraducidos)-1):
-                listarTokens(tokensTraducidos[indice], str(indice), titulos[indice])
+              for indice in range(0,len(tokensTraducidos)-1):
+                  listarTokens(tokensTraducidos[indice], str(indice), titulos[indice])
 
-            btnGenerarHtml.config(state="normal")         
-        else:
-            messagebox.showerror("Traducir Tokens","Ha ocurrido un error.\nNo ha sido posible traducir los tokens.") 
+              btnGenerarHtml.config(state="normal")         
+          else:
+              messagebox.showerror("Traducir Tokens","Ha ocurrido un error.\nNo ha sido posible traducir los tokens.") 
     
 #-----------------------------------------------------------------------------------------------------------# 
 '''
@@ -155,25 +151,28 @@ def comandoTokenizarDocumento():
     global btnGenerarHtml
 
     titulos=["Articulos","Preposiciones","Pronombres","Verbos","Numeros","Sin Clasificar"]
-    
-    resultado=messagebox.askquestion("Tokenizar Documento","¿Esta seguro de tokenizar el texto ingresado?")
 
-    if resultado=='yes':
+    if (txtDocumento.compare("end-1c","==","1.0")):
+      messagebox.showwarning("Texto Vacío","NO se ha ingresado ningún texto para ser tokenizado")
+    else:
+      resultado=messagebox.askquestion("Tokenizar Documento","¿Esta seguro de tokenizar el texto ingresado?")
 
-        reiniciarTokens()
-        listaTokens=LDN.tokenizarCadena(txtDocumento.get(0.0, END))
+      if resultado=='yes':
 
-        if(listaTokens[0]!="-1"):
+          reiniciarTokens()
+          listaTokens=LDN.tokenizarCadena(txtDocumento.get(0.0, END))
 
-            treeViewTokens.delete(*treeViewTokens.get_children())
-            treeViewTokens.insert('', '0', 'documento', text ='Documento')
+          if(listaTokens[0]!="-1"):
 
-            for indice in range(0,len(listaTokens)-1):
-                listarTokens(listaTokens[indice], str(indice), titulos[indice])
+              treeViewTokens.delete(*treeViewTokens.get_children())
+              treeViewTokens.insert('', '0', 'documento', text ='Documento')
 
-            btnGenerarHtml.config(state="normal")
-        else:
-            messagebox.showerror("Tokenizar Documento","Ha ocurrido un error.\nEl texto no se ha tokenizado.")
+              for indice in range(0,len(listaTokens)-1):
+                  listarTokens(listaTokens[indice], str(indice), titulos[indice])
+
+              btnGenerarHtml.config(state="normal")
+          else:
+              messagebox.showerror("Tokenizar Documento","Ha ocurrido un error.\nEl texto no se ha tokenizado.")
 
 #-----------------------------------------------------------------------------------------------------------# 
 '''
@@ -183,17 +182,14 @@ Restricciones:Verificar que en el cuadro de texto existan elementos.
 '''
 def listarTokens(lista, posicion, categoria):
     indice=0
-    nombreElemento=""
-
-    btnTraducir.config(state="disabled") 
+    nombreElemento="" 
 
     treeViewTokens.insert('documento', posicion , categoria, text = categoria)  
     if(lista!=[]):
       while(indice!=len(lista)):
           nombreElemento = categoria + str(indice)
           treeViewTokens.insert(categoria, 'end', nombreElemento , text = str(lista[indice]))
-          indice+=1
-          btnTraducir.config(state="normal")    
+          indice+=1   
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
@@ -214,8 +210,7 @@ def comandoGenerarHTML():
         if(LDN.generarHTML(txtDocumento.get(0.0, END),listaTokens)!=-1):
             messagebox.showinfo("Generar HTML","Archivo HTML creado exitosamente.")
             reiniciarTokens()
-            btnGenerarHtml.config(state="disabled")
-            btnTraducir.config(state="disabled")          
+            btnGenerarHtml.config(state="disabled")        
         else:
             messagebox.showerror("Generar HTML","Ha ocurrido un error.\nEl archivo HTML NO se ha generado.")
 
@@ -244,8 +239,6 @@ def inicio():
 
   global txtDocumento
   global treeViewTokens
-  global btnTokenizar
-  global btnTraducir
   global btnGenerarHtml
   global ventanaTokenizacion
 
@@ -256,12 +249,13 @@ def inicio():
   ventanaTokenizacion.config(bg="#F8F9FA")
   ventanaTokenizacion.resizable(False,False)
 
-  frPrincipal = Frame(ventanaTokenizacion, bg="#F8F9FA", height="950", width="550")
+  frPrincipal = Frame(ventanaTokenizacion, bg="#F8F9FA", height="850", width="450")
   
   label1 = Label(frPrincipal, text="Documento: ", bg="#F8F9FA", fg="#006BE5", font=("Calibri", 12))
   label2 = Label(frPrincipal, text="Estructura de Listas: ", bg="#F8F9FA", fg="#006BE5", font=("Calibri", 12))
 
-  txtDocumento = Text(frPrincipal, width="80", font=("Calibri", 11) )
+  txtDocumento = Text(frPrincipal, font=("Calibri", 11))
+  txtDocumento.delete(0.0, END)
   treeViewTokens = ttk.Treeview(frPrincipal) 
 
   frBtnDocumento = Frame(frPrincipal, padx=5, pady=5, bg="#F8F9FA")
@@ -271,9 +265,9 @@ def inicio():
   btnLimpiarTexto.grid(row=0, column=1, sticky="ew", padx=5)
 
   frBtnLista = Frame(frPrincipal, padx=5, pady=5, bg="#F8F9FA")
-  btnTokenizar = Button(frBtnLista, text="Tokenizar", command=comandoTokenizarDocumento, bg="#0288d1", fg="#ffffff", state="disabled", relief=GROOVE, font=("Calibri", 12))
+  btnTokenizar = Button(frBtnLista, text="Tokenizar", command=comandoTokenizarDocumento, bg="#0288d1", fg="#ffffff", relief=GROOVE, font=("Calibri", 12))
   btnTokenizar.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
-  btnTraducir = Button(frBtnLista, text="Traducir", command=comandoTraducirTokens, bg="#0288d1", fg="#ffffff", state="disabled", relief=GROOVE, font=("Calibri", 12))
+  btnTraducir = Button(frBtnLista, text="Traducir", command=comandoTraducirTokens, bg="#0288d1", fg="#ffffff",  relief=GROOVE, font=("Calibri", 12))
   btnTraducir.grid(row=0, column=1, sticky="ew", padx=5)
 
   btnGenerarHtml = Button(frPrincipal, text="Generar HTML", command=comandoGenerarHTML, bg="#0288d1", fg="#ffffff", state="disabled", relief=GROOVE, font=("Calibri", 12))
