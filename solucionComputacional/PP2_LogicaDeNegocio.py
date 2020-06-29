@@ -3,6 +3,18 @@ from translate import Translator
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
+Entradas:Una cadena de caracteres referente a la ruta de un archivo.
+Salidas:Una cadena de caracteres que contiene el texto que se encontraba dentro del archivo.
+Restricciones:La ruta recibida debe corresponder a una ruta valida para un archivo de texto.
+'''
+def leerArchivoTxt(rutaArchivo):
+    archivoTexto = open(rutaArchivo,"r")
+    cadena = archivoTexto.read()
+    archivoTexto.close()
+    return cadena
+
+#-----------------------------------------------------------------------------------------------------------#
+'''
 Entradas: Una lista con todos sus elementos en español
 Salidas: Otra lista con los valores de la lista recibida traducidos de español a ingles
 Restricciones:No valida restricciones
@@ -16,18 +28,6 @@ def traducirLista(listaEspanol):
       listaIngles.append(tradutor.translate(elemento))
 
     return listaIngles
-
-#-----------------------------------------------------------------------------------------------------------#
-'''
-Entradas:Una palabra en español
-Salidas:La palabra de entrada, traducida a ingles
-Restricciones:No valida restricciones
-'''
-def traducirPalabra(palabra):
-    tradutor = Translator(from_lang="Spanish",to_lang="English")
-    traduccion = tradutor.translate(palabra)
-    
-    return traduccion
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
@@ -198,7 +198,6 @@ def generarHTML(cadena, listaTokens):
     finPronombres=False
     finVerbos=False
 
-
     while(True):
       filasHTML=filasHTML+"<tr>"
       
@@ -277,17 +276,6 @@ Salidas: En caso de que se encuentre la palabra buscada dentro de la lista se re
 Restricciones: Los valores de la lista deben corresponder con tipo del valor ingresado para la palabra del 
                segundo parámetro.
 '''
-# def buscarElemento(lista, palabra, posicion=(-1), contador=0):
-#     if(posicion!=-1):
-#       return posicion
-#     elif(contador>=len(lista)):
-#       return -1   
-#     else:
-#         if(lista[contador]==palabra):
-#             return buscarElementoRecusivo(lista, palabra, posicion=contador, contador=contador+1)
-#         else:
-#             return buscarElementoRecusivo(lista, palabra, posicion, contador=contador+1)
-
 def buscarElemento(lista, palabra):
     indice = 0
 
@@ -297,6 +285,20 @@ def buscarElemento(lista, palabra):
         indice += 1
 
     return -1
+
+# def buscarElemento(lista,palabra):
+#     return buscarElementoAUX(list,0,len(list)-1,element)
+
+# def buscarElementoAUX(lista,inicio,fin,palabra):
+#     mitad=(inicio+fin)//2
+#     if (inicio>fin):
+#         return -1
+#     elif(lista[mitad]==palabra):
+#         return mitad
+#     elif(lista[mitad]>palabra):
+#         return buscarElementoAUX(lista,inicio,mitad-1,palabra)
+#     else:
+#         return buscarElementoAUX(lista,mitad+1,fin,palabra)
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
@@ -321,7 +323,7 @@ Restricciones: Ninguna
 def esVerbo(palabra):
     if (palabra[-2:]=="ar" or palabra[-2:]=="er" or palabra[-2:]=="ir"):
         return 1
-    elif (palabra[-4:]=="ando" or palabra[-4:]=="endo"):
+    elif (palabra[-4:]=="ando" or palabra[-5:]=="iendo"):
         return 2
     elif (palabra[-3:]=="ado" or palabra[-3:]=="ido" or palabra[-2:]=="to" or palabra[-3:]=="cho" or palabra[-2:]=="so"):
         return 3
@@ -359,15 +361,6 @@ def eliminarDuplicados(lista,nuevaLista=[]):
             return eliminarDuplicados(lista[1:],nuevaLista)
 
 #-----------------------------------------------------------------------------------------------------------#
-# '''
-# Entradas: Una lista con elementos de un mismo tipo
-# Salidas:La lista ingresada como parametro, omitiendo los valores que estuvieran repetidos dentro de esta.
-# Restricciones:Ninguna
-# '''
-# def clasificarElemento(listaClasificacion):
-    
-
-#-----------------------------------------------------------------------------------------------------------#
 '''
 Entradas:Los valores ingresados en el cuadro de texto 
 Salidas:Se rellenan los valores de las listas globales con los elementos ingresados dentro del cuadro de texto según su tipo. 
@@ -389,6 +382,17 @@ def tokenizarCadena(cadena):
     listaPronombres=["yo", "me", "mí", "conmigo", "nosotros", "nosotras", "nos", "tú", "te", "ti", "contigo", "vosotros", "vosotras", "vos", "él", "ella", "se", "consigo", "le", "les","mío", "mía", "míos", "mías", "nuestro", "nuestra", "nuestros", "nuestras", "tuyo", "tuya", "tuyos", "vuestro", "vuestra", "vuestros", "vuestras", "suyo", "suya", "suyos", "suyas"]
 
     try:
+        '''Proceso de tokenizacion
+            1. Eliminar todos los simbolos, menos los signos de puntuacion
+            2. Crear una lista con los tokens separados por espacios o signos de signos de puntuacion
+                (se eliminan todos los signos menos los puntos)
+            3. Clasificar los tokens que sean numeros, incluidos los decimales, sacarlos de la lista de tokens
+            4. Eliminar los puntos restantes de los tokes de la lista.
+            5. Clasificar el resto de los tokens
+            
+            . --> A o . -->1 . 1 
+
+       '''
         #Lista con las palabras de la cadena separadas, y sin símbolos
         cadenaSinSimbolos = eliminarSimbolos(cadena)
         cadenaSinSaltos = cadenaSinSimbolos.lower().replace('\n', ' ')
@@ -415,12 +419,12 @@ def tokenizarCadena(cadena):
             else:
                 sinClasificar.append(elemento)
 
-            listadoTokens[0]=eliminarDuplicados(articulos)
-            listadoTokens[1]=eliminarDuplicados(preposiciones)
-            listadoTokens[2]=eliminarDuplicados(pronombres)
-            listadoTokens[3]=eliminarDuplicados(verbos)
-            listadoTokens[4]=eliminarDuplicados(numeros)
-            listadoTokens[5]=eliminarDuplicados(sinClasificar)
+        listadoTokens[0]=ordenarLista(eliminarDuplicados(articulos))
+        listadoTokens[1]=ordenarLista(eliminarDuplicados(preposiciones))
+        listadoTokens[2]=ordenarLista(eliminarDuplicados(pronombres))
+        listadoTokens[3]=ordenarLista(eliminarDuplicados(verbos))
+        listadoTokens[4]=ordenarLista(eliminarDuplicados(numeros))
+        listadoTokens[5]=ordenarLista(eliminarDuplicados(sinClasificar))
         
         return listadoTokens
 
@@ -431,18 +435,17 @@ def tokenizarCadena(cadena):
 #-----------------------------------------------------------------------------------------------------------#
 '''
 Entradas:Ninguna
-Salidas:Los valores de las variables globales omitiendo los valores repetidos dentro de estas
+Salidas:Los valores de las listas traducidos omitiendo los valores repetidos dentro de estas, y las listas 
+         de numeros y preposiciones
 Restricciones: Ninguna
 '''
-def traducirListas():
-    articles = eliminarDuplicados(traducirLista(articulos))
-    prepositions = eliminarDuplicados(traducirLista(preposiciones))
-    pronouns = eliminarDuplicados(traducirLista(pronombres))
-    verbs = eliminarDuplicados(traducirLista(verbos))
+def traducirListas(listaTokens):
+    articles = eliminarDuplicados(traducirLista(listaTokens[0]))
+    prepositions = eliminarDuplicados(traducirLista(listaTokens[1]))
+    pronouns = eliminarDuplicados(traducirLista(listaTokens[2]))
+    verbs = eliminarDuplicados(traducirLista(listaTokens[3]))
 
-    listaTokens.delete(1.0, tk.END)
-    listasConcatenadas = "-->Articles:\n"+str(ordenarLista(articles))+"\n\n-->Prepositions:\n"+str(ordenarLista(prepositions))+"\n\n-->Pronouns:\n"+str(ordenarLista(pronombres))+"\n\n-->Verbs:\n"+str(ordenarLista(verbos))
-    listaTokens.insert(tk.END, listasConcatenadas)     
+    return [ordenarLista(articles)]+[ordenarLista(prepositions)]+[ordenarLista(pronouns)]+[ordenarLista(verbs)]    
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
@@ -458,15 +461,5 @@ def reiniciarValores():
     numeros=[]
     sinClasificar=[]
 
-#-----------------------------------------------------------------------------------------------------------#
-'''
-Entradas:Una cadena de caracteres referente a la ruta de un archivo.
-Salidas:Una cadena de caracteres que contiene el texto que se encontraba dentro del archivo.
-Restricciones:La ruta recibida debe corresponder a una ruta valida para un archivo de texto.
-'''
-def leerArchivoTxt(rutaArchivo):
-    archivoTexto = open(rutaArchivo,"r")
-    cadena = archivoTexto.read()
-    archivoTexto.close()
-    return cadena
+
 

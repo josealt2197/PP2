@@ -12,6 +12,7 @@ treeViewTokens=""
 btnTokenizar=""
 btnTraducir=""
 btnGenerarHtml=""
+ventanaTokenizacion=""
 
 '''
 generafilas(filas="", x=0, y=0):
@@ -37,15 +38,34 @@ generafilas(filas="", x=0, y=0):
     funcionRecursiva --> recursos[6] --> recursos(6,1)=recursos[sinClasificar[1]]
    
 '''
+#-----------------------------------------------------------------------------------------------------------#
+'''
+Entradas:Ninguna
+Salidas:Reinicia los los valores de las variables globales para los tokens y paa el texto ingresado
+Restricciones: Ninguna
+'''
+def reiniciarValores():
+    global listaTokens
+    global treeViewTokens
+    global txtDocumento
+
+    listaTokens=[]
+    treeViewTokens.delete(*treeViewTokens.get_children())
+
+    txtDocumento.configure(state="normal")
+    txtDocumento.delete(0.0, END)
+
+    btnTokenizar.config(state="disabled")
+    btnTraducir.config(state="disabled")
+    btnGenerarHtml.config(state="disabled")
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
 Entradas:Ninguna
-Salidas:Reinicia los los valores de las variables globales para los tokens e invoce la funcion 
-        para deshabilitar lo botones
+Salidas:Reinicia los los valores de las variables globales para los tokens 
 Restricciones: Ninguna
 '''
-def reiniciarValores():
+def reiniciarTokens():
     global listaTokens
     global treeViewTokens
 
@@ -89,6 +109,38 @@ def comandoLeerArchivo():
     txtDocumento.insert(END, texto)
     btnTokenizar.config(state="normal")
     btnTraducir.config(state="disabled")
+
+#-----------------------------------------------------------------------------------------------------------#
+'''
+Entradas:Ninguna
+Salidas:Los valores de las variables globales omitiendo los valores repetidos dentro de estas
+Restricciones: Ninguna
+'''
+def comandoTraducirTokens():
+    global treeViewTokens
+    global listaTokens
+    tokensTraducidos = []
+
+    titulos=["Articles","Prepositions","Pronouns","Verbs"]
+
+    resultado=messagebox.askquestion('Traducir Tokens','¿Desea traducir los Tokens extraidos del documento?')
+
+    if resultado=='yes':
+        
+        reiniciarTokens()
+        tokensTraducidos=LDN.traducirListas(listaTokens)
+
+        if(tokensTraducidos!=[]):
+
+            treeViewTokens.delete(*treeViewTokens.get_children())
+            treeViewTokens.insert('', '0', 'documento', text ='Documento')
+
+            for indice in range(0,len(tokensTraducidos)-1):
+                listarTokens(tokensTraducidos[indice], str(indice), titulos[indice])
+
+            btnGenerarHtml.config(state="normal")         
+        else:
+            messagebox.showerror("Traducir Tokens","Ha ocurrido un error.\nNo ha sido posible traducir los tokens.") 
     
 #-----------------------------------------------------------------------------------------------------------# 
 '''
@@ -104,12 +156,11 @@ def comandoTokenizarDocumento():
 
     titulos=["Articulos","Preposiciones","Pronombres","Verbos","Numeros","Sin Clasificar"]
     
-
     resultado=messagebox.askquestion("Tokenizar Documento","¿Esta seguro de tokenizar el texto ingresado?")
 
     if resultado=='yes':
 
-        reiniciarValores()
+        reiniciarTokens()
         listaTokens=LDN.tokenizarCadena(txtDocumento.get(0.0, END))
 
         if(listaTokens[0]!="-1"):
@@ -142,27 +193,7 @@ def listarTokens(lista, posicion, categoria):
           nombreElemento = categoria + str(indice)
           treeViewTokens.insert(categoria, 'end', nombreElemento , text = str(lista[indice]))
           indice+=1
-          btnTraducir.config(state="normal") 
-
-#-----------------------------------------------------------------------------------------------------------#
-'''
-Entradas:Ninguna
-Salidas:Los valores de las variables globales omitiendo los valores repetidos dentro de estas
-Restricciones: Ninguna
-'''
-def comandoTraducirTokens():
-    global txtDocumento
-    global treeViewTokens
-    global listaTokens
-
-    # articles = eliminarDuplicados(traducirLista(listaTokens()))
-    # prepositions = eliminarDuplicados(traducirLista(listaTokens))
-    # pronouns = eliminarDuplicados(traducirLista(listaTokens))
-    # verbs = eliminarDuplicados(traducirLista(listaTokens))
-
-    # treeViewTokens.delete(0.0, END)
-    # listasConcatenadas = "-->Articles:\n"+str(ordenarLista(articles))+"\n\n-->Prepositions:\n"+str(ordenarLista(prepositions))+"\n\n-->Pronouns:\n"+str(ordenarLista(pronombres))+"\n\n-->Verbs:\n"+str(ordenarLista(verbos))
-    # treeViewTokens.insert(END, listasConcatenadas)     
+          btnTraducir.config(state="normal")    
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
@@ -182,7 +213,7 @@ def comandoGenerarHTML():
 
         if(LDN.generarHTML(txtDocumento.get(0.0, END),listaTokens)!=-1):
             messagebox.showinfo("Generar HTML","Archivo HTML creado exitosamente.")
-            reiniciarValores()
+            reiniciarTokens()
             btnGenerarHtml.config(state="disabled")
             btnTraducir.config(state="disabled")          
         else:
@@ -198,6 +229,16 @@ def comandoAbrirManual():
     print("abrirManualUsuario")
 
 #-----------------------------------------------------------------------------------------------------------#
+'''
+Entradas:
+Salidas: 
+Restricciones:
+'''
+def comandoSalir():
+    global ventanaTokenizacion
+    ventanaTokenizacion.destroy()
+
+#-----------------------------------------------------------------------------------------------------------#
 
 def inicio():
 
@@ -206,9 +247,10 @@ def inicio():
   global btnTokenizar
   global btnTraducir
   global btnGenerarHtml
+  global ventanaTokenizacion
 
   ventanaTokenizacion = Tk()
-  ventanaTokenizacion.title("Tokenizacion de Caracteres")
+  ventanaTokenizacion.title("Tokenizacion de Texto")
   ventanaTokenizacion.iconbitmap("icon.ico")
   ventanaTokenizacion.geometry("950x550")
   ventanaTokenizacion.config(bg="#F8F9FA")
@@ -247,10 +289,17 @@ def inicio():
   frPrincipal.pack()
 
   menuBar = Menu(ventanaTokenizacion)
-  menuSuperior = Menu(menuBar, tearoff=0, activebackground="#0288d1", activeforeground="#ffffff")
-  menuSuperior.add_command(label="Manual de Usuario", command=comandoAbrirManual)
-  menuBar.add_cascade(label="Ayuda", menu=menuSuperior)
+  menuSuperiorA = Menu(menuBar, tearoff=0)
+  menuSuperiorA.add_command(label="Abrir un archivo", command=comandoLeerArchivo)
+  menuSuperiorA.add_command(label="Borrar valores", command=reiniciarValores)
+  menuSuperiorA.add_command(label="Salir del programa", command=comandoSalir)
+  menuBar.add_cascade(label="Opciones", menu=menuSuperiorA)
+  menuSuperiorB = Menu(menuBar, tearoff=0)
+  menuSuperiorB.add_command(label="Manual de Usuario", command=comandoAbrirManual)
+  menuSuperiorB.add_command(label="Acerca de", command=comandoAbrirManual)
+  menuBar.add_cascade(label="Ayuda", menu=menuSuperiorB)
   ventanaTokenizacion.config(menu=menuBar)
 
   ventanaTokenizacion.mainloop()
 
+inicio()
