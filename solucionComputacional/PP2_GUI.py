@@ -116,9 +116,9 @@ def comandoTraducirTokens():
     titulos=["Articles","Prepositions","Pronouns","Verbs"]
     
     if (txtDocumento.compare("end-1c","==","1.0")):
-      messagebox.showwarning("Texto Vacío","NO se ha ingresado ningún texto para ser tokenizado")
+      messagebox.showwarning("Texto Vacío","NO se ha ingresado ningún texto para ser traducido")
     else:
-      resultado=messagebox.askquestion('Traducir Tokens','¿Desea traducir los Tokens extraidos del documento?')
+      resultado=messagebox.askquestion('Traducir Tokens','¿Desea traducir los Tokens extraidos del documento? \nEste proceso podría tomar un momento')
 
       if resultado=='yes':
           
@@ -129,7 +129,7 @@ def comandoTraducirTokens():
           if(tokensTraducidos[0]!="-1"):
 
               treeViewTokens.delete(*treeViewTokens.get_children())
-              treeViewTokens.insert('', '0', 'documento', text ='Documento')
+              treeViewTokens.insert('', '0', 'documento', text ='Document')
 
               for indice in range(0,len(tokensTraducidos)-1):
                   listarTokens(tokensTraducidos[indice], str(indice), titulos[indice])
@@ -247,7 +247,7 @@ def inicio():
   ventanaTokenizacion.iconbitmap("icon.ico")
   ventanaTokenizacion.geometry("950x550")
   ventanaTokenizacion.config(bg="#F8F9FA")
-  ventanaTokenizacion.resizable(False,False)
+  ventanaTokenizacion.resizable(width=0, height=0) 
 
   frPrincipal = Frame(ventanaTokenizacion, bg="#F8F9FA", height="850", width="450")
   
