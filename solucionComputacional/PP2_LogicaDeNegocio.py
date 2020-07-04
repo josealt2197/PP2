@@ -133,7 +133,7 @@ def generarHTML(cadena, listaTokens):
     finNumeros=False
     finSinClasificar=False
 
-    # print(agregarFilasHTML(listaTokens[0]))
+    print(agregarFilasHTML(listaTokens))
 
     while(True):
       filasHTML=filasHTML+"<tr>"
@@ -264,35 +264,29 @@ def agregarFilasHTML(lista):
     filasHTML=""
     indiceX=0
     indiceY=0
-    finLista=0
-    # finListas=[0,0,0,0,0,0]
+    finLista=False
+    finListas=[False,False,False,False,False,False]
 
     while(True):
       filasHTML=filasHTML+"<tr>"
       
-      # for indiceX in range(0,7):
-      #   if(indiceY<len(lista[indiceX])):
-      #     filasHTML=filasHTML+"<td><p>"+str(lista[indiceX][indiceY])+"</p></td>"
-      #   else:
-      #     filasHTML=filasHTML+"<td></td>"
-      #     finListas[indiceX]=1
-      #     print(indiceX)
-
-      if(indiceY<len(lista)):
-        filasHTML=filasHTML+"<td><p>"+str(lista[indiceY])+"</p></td>"
-      else:
-        filasHTML=filasHTML+"<td></td>"
-        finListas=1
+      for indiceX in range(0,6):
+        if(indiceY<len(lista[indiceX])):
+          filasHTML=filasHTML+"<td><p>"+str(lista[indiceX][indiceY])+"</p></td>"
+        else:
+          filasHTML=filasHTML+"<td></td>"
+          finListas[indiceX]=True
+          print(indiceX)
+ 
 
       filasHTML=filasHTML+"</tr>"
       indiceY+=1
-      print(filasHTML)
+      
 
-      if (finLista==1):
-        # finListas[0]==1 and finListas[1]==1 and finListas[2]==1 and finListas[3]==1 and finListas[4]==1 and finListas[5]==1):
+      if (finListas[0]==True and finListas[1]==True and finListas[2]==True and finListas[3]==True and finListas[4]==True and finListas[5]==True):
         break
-      # else:
-      #   finListas=[0,0,0,0,0,0]
+      else:
+        finListas=[False,False,False,False,False,False]
 
     return filasHTML
 
