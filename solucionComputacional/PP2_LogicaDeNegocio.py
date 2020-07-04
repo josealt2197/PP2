@@ -9,7 +9,7 @@ Salidas:Una cadena de caracteres que contiene el texto que se encontraba dentro 
 Restricciones:La ruta recibida debe corresponder a una ruta valida para un archivo de texto.
 '''
 def leerArchivoTxt(rutaArchivo):
-    archivoTexto = open(rutaArchivo,"r")
+    archivoTexto = open(rutaArchivo,"r", encoding='utf-8')
     cadena = archivoTexto.read()
     archivoTexto.close()
     return cadena

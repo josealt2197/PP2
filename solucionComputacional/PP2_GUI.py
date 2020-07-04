@@ -1,8 +1,14 @@
-import PP2_LogicaDeNegocio as LDN
+#Proyecto Programado 2 - Grupo: 01 
+#Interfaz Gráfica del programa de Tokenizaciósn de Texto.
+#Estudiantes: Jose Manuel ALtamirano Salazar - 2020426159
+#             Josué Brenes Alfaro - 2020054427
 
+import PP2_LogicaDeNegocio as LDN
+import os
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
+from tkinter import PhotoImage
 from tkinter.filedialog import askopenfilename
 
 #Variables Globales para Interfaz Grafica
@@ -12,34 +18,10 @@ treeViewTokens=""
 btnGenerarHtml=""
 ventanaTokenizacion=""
 
-'''
-generafilas(filas="", x=0, y=0):
-  global recursos
-  filas=filas+"<tr>"
-
-  return generafilas(filas="") 
-
-  Primera Ejecucion (Para listas con = tamaño)
-    funcionRecursiva --> recursos[1] --> recursos(0,0)=recursos[articulos[0]]
-    funcionRecursiva --> recursos[2] --> recursos(1,0)=recursos[preposiciones[0]]
-    funcionRecursiva --> recursos[3] --> recursos(2,0)=recursos[pronombres[0]]
-    funcionRecursiva --> recursos[4] --> recursos(3,0)=recursos[verbos[0]]
-    funcionRecursiva --> recursos[5] --> recursos(4,0)=recursos[numeros[0]]
-    funcionRecursiva --> recursos[6] --> recursos(5,0)=recursos[sinClasificar[0]]
-
-  Segunda Ejecucion
-    funcionRecursiva --> recursos[1] --> recursos(0,1)=recursos[articulos[1]]
-    funcionRecursiva --> recursos[2] --> recursos(1,1)=recursos[preposiciones[1]]
-    funcionRecursiva --> recursos[3] --> recursos(2,1)=recursos[pronombres[1]]
-    funcionRecursiva --> recursos[4] --> recursos(3,1)=recursos[verbos[1]]
-    funcionRecursiva --> recursos[5] --> recursos(4,1)=recursos[numeros[1]]
-    funcionRecursiva --> recursos[6] --> recursos(6,1)=recursos[sinClasificar[1]]
-   
-'''
 #-----------------------------------------------------------------------------------------------------------#
 '''
 Entradas:Ninguna
-Salidas:Reinicia los los valores de las variables globales para los tokens y paa el texto ingresado
+Salidas:Reinicia los valores de las variables globales para el listado de tokens y para el campo de texto
 Restricciones: Ninguna
 '''
 def reiniciarValores():
@@ -58,7 +40,7 @@ def reiniciarValores():
 #-----------------------------------------------------------------------------------------------------------#
 '''
 Entradas:Ninguna
-Salidas:Reinicia los los valores de las variables globales para los tokens 
+Salidas:Reinicia los valores de las variables globales para los tokens 
 Restricciones: Ninguna
 '''
 def reiniciarTokens():
@@ -76,8 +58,6 @@ Restricciones: Ninguna
 '''
 def comandoReiniciarDocumento():
     global txtDocumento
-    global btnTokenizar
-    global btnTraducir
 
     txtDocumento.configure(state="normal")
     txtDocumento.delete(0.0, END)
@@ -91,8 +71,6 @@ Restricciones:La ruta seleccionda debe corresponder a una ruta valida para un ar
 '''
 def comandoLeerArchivo():
     global txtDocumento
-    global btnTokenizar
-    global btnTraducir 
 
     rutaArchivo = askopenfilename(filetypes=[("Text Files", "*.txt"), ("All Files", "*.*")])
     if not rutaArchivo:
@@ -104,9 +82,10 @@ def comandoLeerArchivo():
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
-Entradas:Ninguna
-Salidas:Los valores de las variables globales omitiendo los valores repetidos dentro de estas
-Restricciones: Ninguna
+Entradas:Se hace clic sobre el boton con la leyena "Traducir".
+Salidas: mensajes emergentes de informacion, alerta o error sobre el proceso traduccion y clasificacion del 
+         texto ingresado
+Restricciones: validar que en el cuadro de texto no este vacío.
 '''
 def comandoTraducirTokens():
     global treeViewTokens
@@ -141,8 +120,8 @@ def comandoTraducirTokens():
 #-----------------------------------------------------------------------------------------------------------# 
 '''
 Entradas:Se hace clic sobre el boton con la leyena "Tokenizar".
-Salidas:Una ventana en la cual pregunta si desea tokenizar lo ingresado en el cuadro de texto.
-Restricciones:Verificar que en el cuadro de texto existan elementos. 
+Salidas: mensajes emergentes de informacion, alerta o error sobre el proceso tokenizacion del texto ingresado
+Restricciones: validar que en el cuadro de texto no este vacío. 
 '''
 def comandoTokenizarDocumento():
     global txtDocumento
@@ -176,9 +155,9 @@ def comandoTokenizarDocumento():
 
 #-----------------------------------------------------------------------------------------------------------# 
 '''
-Entradas:Se hace clic sobre el boton con la leyena "Tokenizar".
-Salidas:Una ventana en la cual pregunta si desea tokenizar lo ingresado en el cuadro de texto.
-Restricciones:Verificar que en el cuadro de texto existan elementos. 
+Entradas: una lista, un valor numerico entero y una cadena de caracteres
+Salidas: se añaden los elementos de cada categoria al listado de tokens (treeview)
+Restricciones: ninguna.
 '''
 def listarTokens(lista, posicion, categoria):
     indice=0
@@ -196,7 +175,8 @@ def listarTokens(lista, posicion, categoria):
 Entradas: Se hace clic sobre el boton con la leyenda "Generar HTML"
 Salidas: Una ventana en la que se confirma el proceso de generar el archivo HTML. En caso de que se el usuario
          presione el botón Si/Yes se realiza una llamada a la funcion para generar el archivo HTML.
-Restricciones:Validar que se haya tokenizado el texto previamente ingresado
+         En caso que ocurra un error se mostrará otro mensaje informadno lo sucedido. 
+Restricciones: validar que se haya tokenizado el texto previamente ingresado.
 '''
 def comandoGenerarHTML():
     global txtDocumento
@@ -216,25 +196,69 @@ def comandoGenerarHTML():
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
-Entradas:
-Salidas: 
-Restricciones:
+Entradas: Ninguna
+Salidas: Se abre el archivo del Manual de Usuario en el lector de PDF prederterminado del equipo.
+Restricciones: Ninguna
 '''
 def comandoAbrirManual():
-    print("abrirManualUsuario")
+    rutaManual = os.path.abspath(os.curdir) + "\Recursos\Manual_Usuario.pdf"
+    os.startfile(rutaManual)
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
-Entradas:
-Salidas: 
-Restricciones:
+Entradas: Ninguna
+Salidas: Se detiene la ejecuccion del programa o de la ventana principal
+Restricciones: Ninguna
 '''
 def comandoSalir():
     global ventanaTokenizacion
     ventanaTokenizacion.destroy()
 
 #-----------------------------------------------------------------------------------------------------------#
+'''
+Entradas: Ninguna
+Salidas: Se configuran los objetos de la ventana que contiene la informacion sobre el equipo que desarrollo 
+         el programa y se invoca.
+Restricciones: Ninguna
+'''
+def comandoAcercaDe():
+  window = Tk()
+  window.geometry("420x400")
+  window.iconbitmap("Recursos/form.ico")
+  window.config(bg="LightSkyBlue3")
+  window.title("Informacion")
+  window.resizable(width=0, height=0)
+  lbl0 = Label(window, text="Tecnológico de Costa Rica ", bg="LightSkyBlue3", fg="#000",font=("Verdana", 13))
+  lbl2 = Label(window, text="TI 1401 - Taller de Programación", bg="LightSkyBlue3", fg="#000",font=("Verdana", 11))
+  lbl4 = Label(window, text="Segundo Proyecto Programado", bg="LightSkyBlue3", fg="#000",font=("Verdana", 11))
+  lbl6 = Label(window, text="Programa para Tokenización de Texto", bg="LightSkyBlue3", fg="#000",font=("Verdana", 11))
 
+
+  lbl8 = Label(window, text="Estudiantes:", bg="LightSkyBlue3", fg="#000",font=("Verdana", 13))
+  lbl9 = Label(window, text="José Altamirano Salazar - 2020426139", bg="LightSkyBlue3", fg="#000",font=("Verdana", 11))
+  lbl10 = Label(window, text="Josué Brenes Alfaro - 2020054427", bg="LightSkyBlue3", fg="#000",font=("Verdana", 11))
+
+  lbl0.pack(padx=20, pady=7)
+  lbl2.pack(padx=20, pady=7)
+  lbl4.pack(padx=20, pady=7)
+  lbl6.pack(padx=20, pady=7)
+  lbl8.pack(padx=20, pady=7)
+  lbl9.pack(padx=20, pady=7)
+  lbl10.pack(padx=20, pady=7)
+
+  imagen = PhotoImage(master = window, file="Recursos/imagen.gif")
+  Label(window, image=imagen, bd=0,bg="LightSkyBlue3").pack()
+
+
+  window.mainloop()
+
+
+#-----------------------------------------------------------------------------------------------------------#
+'''
+Entradas: Ninguna
+Salidas: Se configuran los objetos de la ventana principal del programa y se invoca.
+Restricciones: Ninguna
+'''
 def inicio():
 
   global txtDocumento
@@ -244,18 +268,27 @@ def inicio():
 
   ventanaTokenizacion = Tk()
   ventanaTokenizacion.title("Tokenizacion de Texto")
-  ventanaTokenizacion.iconbitmap("icon.ico")
-  ventanaTokenizacion.geometry("950x550")
+  ventanaTokenizacion.iconbitmap("Recursos/icon.ico")
+  ventanaTokenizacion.geometry("950x545")
   ventanaTokenizacion.config(bg="#F8F9FA")
   ventanaTokenizacion.resizable(width=0, height=0) 
 
   frPrincipal = Frame(ventanaTokenizacion, bg="#F8F9FA", height="850", width="450")
   
-  label1 = Label(frPrincipal, text="Documento: ", bg="#F8F9FA", fg="#006BE5", font=("Calibri", 12))
-  label2 = Label(frPrincipal, text="Estructura de Listas: ", bg="#F8F9FA", fg="#006BE5", font=("Calibri", 12))
+  label1 = Label(frPrincipal, text="Documento: ", bg="#F8F9FA", fg="#0288d1", font=("Calibri", 12, "bold"))
+  label2 = Label(frPrincipal, text="Estructura de Listas: ", bg="#F8F9FA", fg="#0288d1", font=("Calibri", 12, "bold"))
+  
+  frameTexto = Frame(frPrincipal, width=250, height=350)
 
-  txtDocumento = Text(frPrincipal, font=("Calibri", 11))
-  txtDocumento.delete(0.0, END)
+  txtDocumento = Text(frameTexto)
+
+  scrollbarTexto = Scrollbar(frameTexto)
+  txtDocumento = Text(frameTexto, width=70, height=25)
+  scrollbarTexto.pack(side=RIGHT,fill=Y)
+  txtDocumento.pack(side=LEFT, fill=Y)
+  scrollbarTexto.config(command=txtDocumento.yview)
+  txtDocumento.config(yscrollcommand=scrollbarTexto.set)
+
   treeViewTokens = ttk.Treeview(frPrincipal) 
 
   frBtnDocumento = Frame(frPrincipal, padx=5, pady=5, bg="#F8F9FA")
@@ -273,7 +306,7 @@ def inicio():
   btnGenerarHtml = Button(frPrincipal, text="Generar HTML", command=comandoGenerarHTML, bg="#0288d1", fg="#ffffff", state="disabled", relief=GROOVE, font=("Calibri", 12))
 
   label1.grid(row=0,column=0, sticky="w", padx=5)
-  txtDocumento.grid(row=1, column=0, sticky="w", padx=10)
+  frameTexto.grid(row=1, column=0, sticky="ns", padx=10)
   frBtnDocumento.grid(row=2, column=0, sticky="se", padx=5, pady=10)
   label2.grid(row=0, column=1, sticky="w", padx=5)
   treeViewTokens.grid(row=1, column=1, sticky="ns", padx=5)
@@ -290,7 +323,7 @@ def inicio():
   menuBar.add_cascade(label="Opciones", menu=menuSuperiorA)
   menuSuperiorB = Menu(menuBar, tearoff=0)
   menuSuperiorB.add_command(label="Manual de Usuario", command=comandoAbrirManual)
-  menuSuperiorB.add_command(label="Acerca de", command=comandoAbrirManual)
+  menuSuperiorB.add_command(label="Acerca de", command=comandoAcercaDe)
   menuBar.add_cascade(label="Ayuda", menu=menuSuperiorB)
   ventanaTokenizacion.config(menu=menuBar)
 
