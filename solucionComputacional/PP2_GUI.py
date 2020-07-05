@@ -1,6 +1,6 @@
 #Proyecto Programado 2 - Grupo: 01 
 #Interfaz Gráfica del programa de Tokenizaciósn de Texto.
-#Estudiantes: Jose Manuel ALtamirano Salazar - 2020426159
+#Estudiantes: Jose Manuel Altamirano Salazar - 2020426159
 #             Josué Brenes Alfaro - 2020054427
 
 import PP2_LogicaDeNegocio as LDN
@@ -129,7 +129,7 @@ def comandoTokenizarDocumento():
     global listaTokens
     global btnGenerarHtml
 
-    titulos=["Articulos","Preposiciones","Pronombres","Verbos","Numeros","Sin Clasificar"]
+    titulos=["Articulos","Preposiciones","Pronombres","Verbos", "Numeros", "Sin Clasificar"]
 
     if (txtDocumento.compare("end-1c","==","1.0")):
       messagebox.showwarning("Texto Vacío","NO se ha ingresado ningún texto para ser tokenizado")

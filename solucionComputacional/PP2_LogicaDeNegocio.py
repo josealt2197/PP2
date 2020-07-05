@@ -1,3 +1,8 @@
+#Proyecto Programado 2 - Grupo: 01 
+#Lógica de Negocio del Programa de Tokenizaciósn de Texto.
+#Estudiantes: Jose Manuel Altamirano Salazar - 2020426159
+#             Josué Brenes Alfaro - 2020054427
+
 from datetime import datetime
 from googletrans import Translator
 import re, string
@@ -50,18 +55,15 @@ Salidas:Un archivo HTML fon un formato establecido por la funcion
 Restricciones:No valida restricciones
 '''
 def generarHTML(cadena, listaTokens):
-    filasHTML = ""
-    articles = []
-    prepositions = []
-    pronouns = []
-    verbs = []
-
-    articles = traducirLista(listaTokens[0])
-    prepositions = traducirLista(listaTokens[1])
-    pronouns = traducirLista(listaTokens[2])
-    verbs = traducirLista(listaTokens[3])
-
     nombreArchivo ="Análisis-"+obtenerFechaActual()+".html"
+    textoHTML = ""
+    filasHTML = ""
+    listaTokensIngles = [[],[],[],[]]
+
+    listaTokensIngles[0] = traducirLista(listaTokens[0])
+    listaTokensIngles[1] = traducirLista(listaTokens[1])
+    listaTokensIngles[2] = traducirLista(listaTokens[2])
+    listaTokensIngles[3] = traducirLista(listaTokens[3])  
 
     textoHTML = """
     <!DOCTYPE html>
@@ -114,83 +116,22 @@ def generarHTML(cadena, listaTokens):
     textoHTML = textoHTML + """ 
         </p>
         <hr>
-        <h1>Analisis del documento</h1>
+        <h1>Análisis del documento</h1>
         <table>
           <tr>
-            <th>Articulos</th>
+            <th>Artículos</th>
             <th>Preposiciones</th>
             <th>Pronombres</th>
             <th>Verbos</th>
-            <th>Numeros</th>
+            <th>Números</th>
             <th>Sin Clasificar</th>
           </tr>
         """
-    indice=0
-    finArticulos=False
-    finPreposiciones=False
-    finPronombres=False
-    finVerbos=False
-    finNumeros=False
-    finSinClasificar=False
-
-    print(agregarFilasHTML(listaTokens))
-
-    while(True):
-      filasHTML=filasHTML+"<tr>"
-      
-      if(indice<len(listaTokens[0])):
-        filasHTML=filasHTML+"<td><p>"+str(listaTokens[0][indice])+"</p></td>"
-      else:
-        filasHTML=filasHTML+"<td></td>"
-        finArticulos=True
-
-      if(indice<len(listaTokens[1])):
-        filasHTML=filasHTML+"<td><p>"+str(listaTokens[1][indice])+"</p></td>"
-      else:
-        filasHTML=filasHTML+"<td></td>"
-        finPreposiciones=True
-
-      if(indice<len(listaTokens[2])):
-        filasHTML=filasHTML+"<td><p>"+str(listaTokens[2][indice])+"</p></td>"
-      else:
-        filasHTML=filasHTML+"<td></td>"
-        finPronombres=True
-
-      if(indice<len(listaTokens[3])):
-        filasHTML=filasHTML+"<td><p>"+str(listaTokens[3][indice])+"</p></td>"
-      else:
-        filasHTML=filasHTML+"<td></td>"
-        finVerbos=True
-
-      if(indice<len(listaTokens[4])):
-        filasHTML=filasHTML+"<td><p>"+str(listaTokens[4][indice])+"</p></td>"
-      else:
-        filasHTML=filasHTML+"<td></td>"
-        finNumeros=True
-
-      if(indice<len(listaTokens[5])):
-        filasHTML=filasHTML+"<td><p>"+str(listaTokens[5][indice])+"</p></td>"
-      else:
-        filasHTML=filasHTML+"<td></td>"
-        finSinClasificar=True
-
-      filasHTML=filasHTML+"</tr>"
-      indice+=1
-
-      if (finArticulos==True and finPreposiciones==True and finPronombres==True and finVerbos==True and finNumeros==True and finSinClasificar==True):
-        break
-
-      finArticulos=False
-      finPreposiciones=False
-      finPronombres=False
-      finVerbos=False
-      finNumeros=False
-      finSinClasificar=False
-
+    filasHTML=filasHTML+agregarFilasHTML(listaTokens)
     textoHTML = textoHTML + filasHTML[:-63] + """ 
         </table>
 
-        <h1>Analisis del documento (traduccion)</h1>
+        <h1>Análisis del documento (traducción)</h1>
         <table>
           <tr>
             <th>Articles</th>
@@ -200,51 +141,8 @@ def generarHTML(cadena, listaTokens):
           </tr>
         """
     filasHTML=""
-    indice=0
-    finArticulos=False
-    finPreposiciones=False
-    finPronombres=False
-    finVerbos=False
-
-    while(True):
-      filasHTML=filasHTML+"<tr>"
-      
-      if(indice<len(articles)):
-        filasHTML=filasHTML+"<td><p>"+str(articles[indice])+"</p></td>"
-      else:
-        filasHTML=filasHTML+"<td></td>"
-        finArticulos=True
-
-      if(indice<len(prepositions)):
-        filasHTML=filasHTML+"<td><p>"+str(prepositions[indice])+"</p></td>"
-      else:
-        filasHTML=filasHTML+"<td></td>"
-        finPreposiciones=True
-
-      if(indice<len(pronouns)):
-        filasHTML=filasHTML+"<td><p>"+str(pronouns[indice])+"</p></td>"
-      else:
-        filasHTML=filasHTML+"<td></td>"
-        finPronombres=True
-
-      if(indice<len(verbs)):
-        filasHTML=filasHTML+"<td><p>"+str(verbs[indice])+"</p></td>"
-      else:
-        filasHTML=filasHTML+"<td></td>"
-        finVerbos=True
-
-      filasHTML=filasHTML+"</tr>"
-      indice+=1
-
-      if (finArticulos==True and finPreposiciones==True and finPronombres==True and finVerbos==True):
-        break
-
-      finArticulos=False
-      finPreposiciones=False
-      finPronombres=False
-      finVerbos=False
-
-    textoHTML = textoHTML + filasHTML[:-63] +  """        
+    filasHTML=filasHTML+agregarFilasHTMLIngles(listaTokensIngles)
+    textoHTML = textoHTML + filasHTML[:-45] +  """        
       </table>
       </center>
       </body>
@@ -252,7 +150,7 @@ def generarHTML(cadena, listaTokens):
       """
 
     try:
-        Html_file = open(nombreArchivo,"x")
+        Html_file = open(nombreArchivo,"x", encoding='utf-8')
         Html_file.write(textoHTML)
         Html_file.close()
         return 1
@@ -264,7 +162,6 @@ def agregarFilasHTML(lista):
     filasHTML=""
     indiceX=0
     indiceY=0
-    finLista=False
     finListas=[False,False,False,False,False,False]
 
     while(True):
@@ -276,17 +173,41 @@ def agregarFilasHTML(lista):
         else:
           filasHTML=filasHTML+"<td></td>"
           finListas[indiceX]=True
-          print(indiceX)
- 
 
       filasHTML=filasHTML+"</tr>"
-      indiceY+=1
-      
+      indiceY+=1   
 
       if (finListas[0]==True and finListas[1]==True and finListas[2]==True and finListas[3]==True and finListas[4]==True and finListas[5]==True):
         break
       else:
         finListas=[False,False,False,False,False,False]
+
+    return filasHTML
+
+#-----------------------------------------------------------------------------------------------------------#
+def agregarFilasHTMLIngles(lista):
+    filasHTML=""
+    indiceX=0
+    indiceY=0
+    finListas=[False,False,False,False]
+
+    while(True):
+      filasHTML=filasHTML+"<tr>"
+      
+      for indiceX in range(0,4):
+        if(indiceY<len(lista[indiceX])):
+          filasHTML=filasHTML+"<td><p>"+str(lista[indiceX][indiceY])+"</p></td>"
+        else:
+          filasHTML=filasHTML+"<td></td>"
+          finListas[indiceX]=True
+
+      filasHTML=filasHTML+"</tr>"
+      indiceY+=1   
+
+      if (finListas[0]==True and finListas[1]==True and finListas[2]==True and finListas[3]==True):
+        break
+      else:
+        finListas=[False,False,False,False]
 
     return filasHTML
 
@@ -420,15 +341,18 @@ def clasificarTokens(listaTokenizada):
             listadoTokens[1].append(elemento)
         elif(buscarElemento(listaPronombres, elemento)!=-1):
             listadoTokens[2].append(elemento)
-        elif(esNumero(elemento)):
-            listadoTokens[3].append(elemento)
         elif(esVerbo(elemento)!=-1):
+            listadoTokens[3].append(elemento)        
+        elif(esNumero(elemento)):
             listadoTokens[4].append(elemento)
         else:
             listadoTokens[5].append(elemento)
 
-    for indice in range(0, len(listadoTokens)-1):
-        listadoTokens[indice]=ordenarLista(eliminarDuplicados(listadoTokens[indice]))
+    for indice in range(0, 6):
+        listadoTokens[indice]=ordenarLista(listadoTokens[indice])
+
+    for indice in range(0, 6):
+        listadoTokens[indice]=eliminarDuplicados(listadoTokens[indice])
     
     return listadoTokens
 
