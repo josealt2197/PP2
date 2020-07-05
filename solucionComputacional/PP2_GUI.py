@@ -141,12 +141,13 @@ def comandoTokenizarDocumento():
           reiniciarTokens()
           listaTokens=LDN.tokenizarCadena(txtDocumento.get(0.0, END))
 
+          print(listaTokens)
           if(listaTokens[0]!="-1"):
 
               treeViewTokens.delete(*treeViewTokens.get_children())
               treeViewTokens.insert('', '0', 'documento', text ='Documento')
 
-              for indice in range(0,len(listaTokens)-1):
+              for indice in range(0,len(listaTokens)):
                   listarTokens(listaTokens[indice], str(indice), titulos[indice])
 
               btnGenerarHtml.config(state="normal")

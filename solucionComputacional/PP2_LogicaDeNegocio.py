@@ -325,7 +325,7 @@ Salidas: Una de con varias sublistas de elementos segun su clasificacion como: a
 Restricciones: No se valida ninguna restriccion 
 '''
 def clasificarTokens(listaTokenizada):
-    listadoTokens=[[],[],[],[],[],[],[]]
+    listadoTokens=[[],[],[],[],[],[]]
 
     #Listas para de valores posibles para los elementos
     listaArticulos=['al', 'del', 'el', 'la', 'las', 'lo', 'los', 'un', 'una', 'unas', 'unos']
@@ -345,7 +345,7 @@ def clasificarTokens(listaTokenizada):
             listadoTokens[3].append(elemento)        
         elif(esNumero(elemento)):
             listadoTokens[4].append(elemento)
-        else:
+        elif (elemento!=""):
             listadoTokens[5].append(elemento)
 
     for indice in range(0, 6):
@@ -353,7 +353,7 @@ def clasificarTokens(listaTokenizada):
 
     for indice in range(0, 6):
         listadoTokens[indice]=eliminarDuplicados(listadoTokens[indice])
-    
+
     return listadoTokens
 
 #-----------------------------------------------------------------------------------------------------------#
