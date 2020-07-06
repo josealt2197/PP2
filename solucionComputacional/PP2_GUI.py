@@ -39,19 +39,6 @@ def reiniciarValores():
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
-Entradas:Ninguna
-Salidas:Reinicia los valores de las variables globales para los tokens 
-Restricciones: Ninguna
-'''
-def reiniciarTokens():
-    global listaTokens
-    global treeViewTokens
-
-    listaTokens=[]
-    treeViewTokens.delete(*treeViewTokens.get_children())
-
-#-----------------------------------------------------------------------------------------------------------#
-'''
 Entradas: Ninguna
 Salidas:Elimina el contenido del campo de texto de la venta principal
 Restricciones: Ninguna
@@ -79,6 +66,22 @@ def comandoLeerArchivo():
     txtDocumento.delete(0.0, END)
     txtDocumento.insert(END, texto)
 
+#-----------------------------------------------------------------------------------------------------------# 
+'''
+Entradas: una lista, un valor numerico entero y una cadena de caracteres
+Salidas: se añaden los elementos de cada categoria al listado de tokens (treeview)
+Restricciones: ninguna.
+'''
+def listarTokens(lista, posicion, categoria):
+    indice=0
+    nombreElemento="" 
+
+    treeViewTokens.insert('documento', posicion , categoria, text = categoria)  
+    if(lista!=[]):
+      while(indice!=len(lista)):
+          nombreElemento = categoria + str(indice)
+          treeViewTokens.insert(categoria, 'end', nombreElemento , text = str(lista[indice]))
+          indice+=1 
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
@@ -89,7 +92,6 @@ Restricciones: validar que en el cuadro de texto no este vacío.
 '''
 def comandoTraducirTokens():
     global treeViewTokens
-    global listaTokens
     tokensTraducidos = []
 
     titulos=["Articles","Prepositions","Pronouns","Verbs"]
@@ -101,8 +103,6 @@ def comandoTraducirTokens():
 
       if resultado=='yes':
           
-          reiniciarTokens()
-
           tokensTraducidos=LDN.traducirListas(LDN.tokenizarCadena(txtDocumento.get(0.0, END)))
 
           if(tokensTraducidos[0]!="-1"):
@@ -110,10 +110,9 @@ def comandoTraducirTokens():
               treeViewTokens.delete(*treeViewTokens.get_children())
               treeViewTokens.insert('', '0', 'documento', text ='Document')
 
-              for indice in range(0,len(tokensTraducidos)-1):
+              for indice in range(0,len(tokensTraducidos)):
                   listarTokens(tokensTraducidos[indice], str(indice), titulos[indice])
-
-              btnGenerarHtml.config(state="normal")         
+   
           else:
               messagebox.showerror("Traducir Tokens","Ha ocurrido un error.\nNo ha sido posible traducir los tokens.") 
     
@@ -138,10 +137,8 @@ def comandoTokenizarDocumento():
 
       if resultado=='yes':
 
-          reiniciarTokens()
           listaTokens=LDN.tokenizarCadena(txtDocumento.get(0.0, END))
 
-          print(listaTokens)
           if(listaTokens[0]!="-1"):
 
               treeViewTokens.delete(*treeViewTokens.get_children())
@@ -152,24 +149,7 @@ def comandoTokenizarDocumento():
 
               btnGenerarHtml.config(state="normal")
           else:
-              messagebox.showerror("Tokenizar Documento","Ha ocurrido un error.\nEl texto no se ha tokenizado.")
-
-#-----------------------------------------------------------------------------------------------------------# 
-'''
-Entradas: una lista, un valor numerico entero y una cadena de caracteres
-Salidas: se añaden los elementos de cada categoria al listado de tokens (treeview)
-Restricciones: ninguna.
-'''
-def listarTokens(lista, posicion, categoria):
-    indice=0
-    nombreElemento="" 
-
-    treeViewTokens.insert('documento', posicion , categoria, text = categoria)  
-    if(lista!=[]):
-      while(indice!=len(lista)):
-          nombreElemento = categoria + str(indice)
-          treeViewTokens.insert(categoria, 'end', nombreElemento , text = str(lista[indice]))
-          indice+=1   
+              messagebox.showerror("Tokenizar Documento","Ha ocurrido un error.\nEl texto no se ha tokenizado.") 
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
@@ -190,7 +170,6 @@ def comandoGenerarHTML():
 
         if(LDN.generarHTML(txtDocumento.get(0.0, END),listaTokens)!=-1):
             messagebox.showinfo("Generar HTML","Archivo HTML creado exitosamente.")
-            reiniciarTokens()
             btnGenerarHtml.config(state="disabled")        
         else:
             messagebox.showerror("Generar HTML","Ha ocurrido un error.\nEl archivo HTML NO se ha generado.")

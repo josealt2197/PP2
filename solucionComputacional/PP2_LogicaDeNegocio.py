@@ -7,6 +7,7 @@ from datetime import datetime
 from googletrans import Translator
 import re, string
 
+
 #-----------------------------------------------------------------------------------------------------------#
 '''
 Entradas:Una cadena de caracteres referente a la ruta de un archivo.
@@ -38,6 +39,42 @@ def traducirLista(listaEspanol):
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
+Entradas: Una lista con elementos de un mismo tipo
+Salidas:La lista ingresada como parametro, omitiendo los valores que estuvieran repetidos dentro de esta.
+Restricciones:Ninguna
+'''
+def eliminarDuplicados(lista,nuevaLista=[]):
+    if (lista==[]):
+        return nuevaLista
+    else:
+        if (buscarElemento(nuevaLista,lista[0])==-1):
+            return eliminarDuplicados(lista[1:],nuevaLista+[lista[0]])
+        else:
+            return eliminarDuplicados(lista[1:],nuevaLista)
+
+#-----------------------------------------------------------------------------------------------------------#
+'''
+Entradas:Ninguna
+Salidas:Los valores de las listas traducidos omitiendo los valores repetidos dentro de estas, y las listas 
+         de numeros y preposiciones
+Restricciones: Ninguna
+'''
+def traducirListas(lista):
+    tokensTraducidos=[[],[],[],[]]
+    try:
+      tokensTraducidos[0] = eliminarDuplicados(traducirLista(lista[0]))
+      tokensTraducidos[1] = eliminarDuplicados(traducirLista(lista[1]))
+      tokensTraducidos[2] = eliminarDuplicados(traducirLista(lista[2]))
+      tokensTraducidos[3] = eliminarDuplicados(traducirLista(lista[3]))
+
+      return tokensTraducidos
+
+    except Exception as e:
+        print(e) 
+        return ["-1"] 
+
+#-----------------------------------------------------------------------------------------------------------#
+'''
 Entradas:Ninguna
 Salidas:Los datos de la fecha y hora actual en el formato dd-mm-aa-hh-mm-ss
 Restricciones:Ninguna
@@ -58,12 +95,7 @@ def generarHTML(cadena, listaTokens):
     nombreArchivo ="Análisis-"+obtenerFechaActual()+".html"
     textoHTML = ""
     filasHTML = ""
-    listaTokensIngles = [[],[],[],[]]
-
-    listaTokensIngles[0] = traducirLista(listaTokens[0])
-    listaTokensIngles[1] = traducirLista(listaTokens[1])
-    listaTokensIngles[2] = traducirLista(listaTokens[2])
-    listaTokensIngles[3] = traducirLista(listaTokens[3])  
+    listaTokensIngles = traducirListas(listaTokens)
 
     textoHTML = """
     <!DOCTYPE html>
@@ -141,7 +173,7 @@ def generarHTML(cadena, listaTokens):
           </tr>
         """
     filasHTML=""
-    filasHTML=filasHTML+agregarFilasHTMLIngles(listaTokensIngles)
+    filasHTML=filasHTML+agregarFilasHTML(listaTokensIngles)
     textoHTML = textoHTML + filasHTML[:-45] +  """        
       </table>
       </center>
@@ -158,56 +190,44 @@ def generarHTML(cadena, listaTokens):
         return -1 
 
 #-----------------------------------------------------------------------------------------------------------#
+'''
+Entradas:
+Salidas: 
+Restricciones:
+'''
 def agregarFilasHTML(lista):
     filasHTML=""
-    indiceX=0
-    indiceY=0
-    finListas=[False,False,False,False,False,False]
+    indiceSub=0
+    finListas=[]
+    contador=0
+
+    for i in range(0,len(lista)):
+      finListas.append(False)
 
     while(True):
       filasHTML=filasHTML+"<tr>"
       
-      for indiceX in range(0,6):
-        if(indiceY<len(lista[indiceX])):
-          filasHTML=filasHTML+"<td><p>"+str(lista[indiceX][indiceY])+"</p></td>"
+      for indiceGen in range(0,len(lista)):
+        if(indiceSub<len(lista[indiceGen])):
+          filasHTML=filasHTML+"<td><p>"+str(lista[indiceGen][indiceSub])+"</p></td>"
         else:
           filasHTML=filasHTML+"<td></td>"
-          finListas[indiceX]=True
+          finListas[indiceGen]=True
 
       filasHTML=filasHTML+"</tr>"
-      indiceY+=1   
+      indiceSub+=1
+ 
+      for j in range(0,len(lista)):
+        if(finListas[j]==True):
+          contador+=1
 
-      if (finListas[0]==True and finListas[1]==True and finListas[2]==True and finListas[3]==True and finListas[4]==True and finListas[5]==True):
+      if(contador==(len(lista))):
         break
       else:
-        finListas=[False,False,False,False,False,False]
-
-    return filasHTML
-
-#-----------------------------------------------------------------------------------------------------------#
-def agregarFilasHTMLIngles(lista):
-    filasHTML=""
-    indiceX=0
-    indiceY=0
-    finListas=[False,False,False,False]
-
-    while(True):
-      filasHTML=filasHTML+"<tr>"
-      
-      for indiceX in range(0,4):
-        if(indiceY<len(lista[indiceX])):
-          filasHTML=filasHTML+"<td><p>"+str(lista[indiceX][indiceY])+"</p></td>"
-        else:
-          filasHTML=filasHTML+"<td></td>"
-          finListas[indiceX]=True
-
-      filasHTML=filasHTML+"</tr>"
-      indiceY+=1   
-
-      if (finListas[0]==True and finListas[1]==True and finListas[2]==True and finListas[3]==True):
-        break
-      else:
-        finListas=[False,False,False,False]
+        contador=0
+        finListas=[]
+        for k in range(0,len(lista)):
+            finListas.append(False)
 
     return filasHTML
 
@@ -304,21 +324,6 @@ def ordenarLista(lista):
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
-Entradas: Una lista con elementos de un mismo tipo
-Salidas:La lista ingresada como parametro, omitiendo los valores que estuvieran repetidos dentro de esta.
-Restricciones:Ninguna
-'''
-def eliminarDuplicados(lista,nuevaLista=[]):
-    if (lista==[]):
-        return nuevaLista
-    else:
-        if (buscarElemento(nuevaLista,lista[0])==-1):
-            return eliminarDuplicados(lista[1:],nuevaLista+[lista[0]])
-        else:
-            return eliminarDuplicados(lista[1:],nuevaLista)
-
-#-----------------------------------------------------------------------------------------------------------#
-'''
 Entradas: Una lista de valores individuales de un mismo tipo
 Salidas: Una de con varias sublistas de elementos segun su clasificacion como: articulos, preposiciones, 
          pronombres, verbos, numeros o sin clasificar
@@ -376,25 +381,6 @@ def tokenizarCadena(cadena):
         print(e)         
         return ["-1"]
   
-#-----------------------------------------------------------------------------------------------------------#
-'''
-Entradas:Ninguna
-Salidas:Los valores de las listas traducidos omitiendo los valores repetidos dentro de estas, y las listas 
-         de numeros y preposiciones
-Restricciones: Ninguna
-'''
-def traducirListas(lista):
-    tokensTraducidos=[[],[],[],[],[]]
-    try:
-      tokensTraducidos[0] = traducirLista(lista[0])
-      tokensTraducidos[1] = traducirLista(lista[1])
-      tokensTraducidos[2] = traducirLista(lista[2])
-      tokensTraducidos[3] = traducirLista(lista[3])
 
-      return tokensTraducidos
-
-    except Exception as e:
-        print(e) 
-        return ["-1"] 
 
 
