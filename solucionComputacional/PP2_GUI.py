@@ -249,7 +249,7 @@ def inicio():
   ventanaTokenizacion = Tk()
   ventanaTokenizacion.title("Tokenizacion de Texto")
   ventanaTokenizacion.iconbitmap("Recursos/icon.ico")
-  ventanaTokenizacion.geometry("950x545")
+
   ventanaTokenizacion.config(bg="#F8F9FA")
   ventanaTokenizacion.resizable(width=0, height=0) 
 
