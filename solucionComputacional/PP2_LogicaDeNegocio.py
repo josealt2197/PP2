@@ -1,5 +1,5 @@
 #Proyecto Programado 2 - Grupo: 01 
-#Lógica de Negocio del Programa de Tokenizaciósn de Texto.
+#Lógica de Negocio del Programa de Tokenización de Texto.
 #Estudiantes: Jose Manuel Altamirano Salazar - 2020426159
 #             Josué Brenes Alfaro - 2020054427
 
@@ -191,9 +191,10 @@ def generarHTML(cadena, listaTokens):
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
-Entradas:
-Salidas: 
-Restricciones:
+Entradas: Una lista con elementos de un mismo tipo.
+Salidas: Una cadena que contiene el codigo HTML para la insercion de los valores de lista recibida 
+         en un archivo.
+Restricciones: Ninguna.
 '''
 def agregarFilasHTML(lista):
     filasHTML=""
