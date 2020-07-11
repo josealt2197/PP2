@@ -7,7 +7,6 @@ from datetime import datetime
 from googletrans import Translator
 import re, string
 
-
 #-----------------------------------------------------------------------------------------------------------#
 '''
 Entradas:Una cadena de caracteres referente a la ruta de un archivo.
@@ -32,7 +31,7 @@ def traducirLista(listaEspanol):
     traductor = Translator()
     
     for elemento in listaEspanol:
-      traduccion = traductor.translate(elemento, target="en")
+      traduccion = traductor.translate(elemento, src='es', dest="en")
       listaIngles.append(traduccion.text)
 
     return listaIngles
@@ -56,16 +55,19 @@ def eliminarDuplicados(lista,nuevaLista=[]):
 '''
 Entradas:Ninguna
 Salidas:Los valores de las listas traducidos omitiendo los valores repetidos dentro de estas, y las listas 
-         de numeros y preposiciones
+         de numeros y preposiciones o '-1' en caso de error.
 Restricciones: Ninguna
 '''
 def traducirListas(lista):
     tokensTraducidos=[[],[],[],[]]
     try:
-      tokensTraducidos[0] = eliminarDuplicados(traducirLista(lista[0]))
-      tokensTraducidos[1] = eliminarDuplicados(traducirLista(lista[1]))
-      tokensTraducidos[2] = eliminarDuplicados(traducirLista(lista[2]))
-      tokensTraducidos[3] = eliminarDuplicados(traducirLista(lista[3]))
+      tokensTraducidos[0] = traducirLista(lista[0])
+      tokensTraducidos[1] = traducirLista(lista[1])
+      tokensTraducidos[2] = traducirLista(lista[2])
+      tokensTraducidos[3] = traducirLista(lista[3])
+
+      for indice in range(0, 4):
+        tokensTraducidos[indice]=eliminarDuplicados(tokensTraducidos[indice])
 
       return tokensTraducidos
 
@@ -87,8 +89,8 @@ def obtenerFechaActual():
     
 #-----------------------------------------------------------------------------------------------------------#
 '''
-Entradas:Una cadena de texto 
-Salidas:Un archivo HTML fon un formato establecido por la funcion 
+Entradas:Una cadena de texto y una lista con varios elementos 
+Salidas:Un archivo HTML con un formato establecido por la funcion o '-1' en caso de error.
 Restricciones:No valida restricciones
 '''
 def generarHTML(cadena, listaTokens):
@@ -235,7 +237,7 @@ def agregarFilasHTML(lista):
 #-----------------------------------------------------------------------------------------------------------#
 '''
 Entradas:Una cadena de caracteres 
-Salidas:La misma cadena eliminandole los simbolos que no aparezcan en la variable local abcValido
+Salidas:La misma cadena eliminando los simbolos que no aparezcan en la variable local abcValido
 Restricciones:No valida restricciones
 '''
 def validarCaracteres(cadena, cadenaResultante="", indice=0):
@@ -253,12 +255,18 @@ def validarCaracteres(cadena, cadenaResultante="", indice=0):
 Entradas: Una lista con varios elementos y una cadena de caracteres (palabra)
 Salidas: En caso de que se encuentre la palabra buscada dentro de la lista se retorna el valor numerico de la 
          posicion en la que esta se encuentra, caso contrario la funcion retorna el valor numerico -1
-Restricciones: Los valores de la lista deben corresponder con tipo del valor ingresado para la palabra del 
-               segundo parámetro.
+Restricciones: Ninguna.
 '''
 def buscarElemento(lista,palabra):
     return buscarElementoAUX(lista,0,len(lista)-1,palabra)
 
+'''
+Entradas: Una lista con varios elementos, una cadena de caracteres (palabra), las posiciones de inicio y fin 
+          de la lista
+Salidas: En caso de que se encuentre la palabra buscada dentro de la lista se retorna el valor numerico de la 
+         posicion en la que esta se encuentra, caso contrario la funcion retorna el valor numerico -1
+Restricciones: Ninguna.
+'''
 def buscarElementoAUX(lista,inicio,fin,palabra):
     mitad=(inicio+fin)//2
     if (inicio>fin):
@@ -278,7 +286,7 @@ Restricciones:No valida restricciones
 '''
 def esNumero(caracter):
     try:
-        resultado = float(caracter)
+        resultado = int(caracter)
         return True
     except:
         return False
@@ -303,7 +311,7 @@ def esVerbo(palabra):
 #-----------------------------------------------------------------------------------------------------------#
 '''
 Entradas:Una lista de elementos de un mismo tipo.
-Salidas:la lista ingresada con sus elementos en orden ascendente
+Salidas:La lista ingresada con sus elementos en orden ascendente
 Restricciones:No valida restricciones
 '''
 def ordenarLista(lista):
@@ -326,8 +334,8 @@ def ordenarLista(lista):
 #-----------------------------------------------------------------------------------------------------------#
 '''
 Entradas: Una lista de valores individuales de un mismo tipo
-Salidas: Una de con varias sublistas de elementos segun su clasificacion como: articulos, preposiciones, 
-         pronombres, verbos, numeros o sin clasificar
+Salidas: Una lista con varias sublistas de elementos según su clasificacion como: articulos, preposiciones, 
+         pronombres, verbos, numeros o sin clasificar, ordenadas y sin duplicados
 Restricciones: No se valida ninguna restriccion 
 '''
 def clasificarTokens(listaTokenizada):
@@ -364,8 +372,9 @@ def clasificarTokens(listaTokenizada):
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
-Entradas:Los valores ingresados en el cuadro de texto 
-Salidas:Se rellenan los valores de las listas globales con los elementos ingresados dentro del cuadro de texto según su tipo. 
+Entradas:Una cadena de caracteres con los valores ingresados en el cuadro de texto 
+Salidas:Una lista con varias sublistas de elementos según su clasificacion como: articulos, preposiciones, 
+        pronombres, verbos, numeros o sin clasificar.
 Restricciones:No valida restricciones
 '''
 def tokenizarCadena(cadena):    

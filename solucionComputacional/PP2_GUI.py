@@ -53,7 +53,8 @@ def comandoReiniciarDocumento():
 #-----------------------------------------------------------------------------------------------------------#
 '''
 Entradas:Una cadena de caracteres referente a la ruta de un archivo.
-Salidas:Una cadena de caracteres que contiene el texto que se encontraba dentro del archivo.
+Salidas:Se inserta la cadena de caracteres que contiene el texto que se encontraba dentro del archivo, en el
+        cuadro de texto.
 Restricciones:La ruta seleccionda debe corresponder a una ruta valida para un archivo de texto.
 '''
 def comandoLeerArchivo():
@@ -68,9 +69,9 @@ def comandoLeerArchivo():
 
 #-----------------------------------------------------------------------------------------------------------# 
 '''
-Entradas: una lista, un valor numerico entero y una cadena de caracteres
-Salidas: se añaden los elementos de cada categoria al listado de tokens (treeview)
-Restricciones: ninguna.
+Entradas: Una lista, un valor numerico entero y una cadena de caracteres
+Salidas: Se añaden los elementos de cada categoria al listado de tokens (treeview)
+Restricciones: Ninguna.
 '''
 def listarTokens(lista, posicion, categoria):
     indice=0
@@ -85,12 +86,12 @@ def listarTokens(lista, posicion, categoria):
 
 #-----------------------------------------------------------------------------------------------------------#
 '''
-Entradas:Se hace clic sobre el boton con la leyena "Traducir".
-Salidas: mensajes emergentes de informacion, alerta o error sobre el proceso traduccion y clasificacion del 
-         texto ingresado
-Restricciones: validar que en el cuadro de texto no este vacío.
+Entradas: Se hace clic sobre el boton con la leyena "Traducir".
+Salidas: Mensajes emergentes de informacion, alerta o error sobre el proceso traduccion del texto ingresado
+Restricciones: Validar que en el cuadro de texto no este vacío.
 '''
 def comandoTraducirTokens():
+    global txtDocumento
     global treeViewTokens
     tokensTraducidos = []
 
@@ -119,8 +120,8 @@ def comandoTraducirTokens():
 #-----------------------------------------------------------------------------------------------------------# 
 '''
 Entradas:Se hace clic sobre el boton con la leyena "Tokenizar".
-Salidas: mensajes emergentes de informacion, alerta o error sobre el proceso tokenizacion del texto ingresado
-Restricciones: validar que en el cuadro de texto no este vacío. 
+Salidas: Mensajes emergentes de informacion, alerta o error sobre el proceso tokenizacion del texto ingresado
+Restricciones: Validar que en el cuadro de texto no este vacío. 
 '''
 def comandoTokenizarDocumento():
     global txtDocumento
@@ -154,10 +155,10 @@ def comandoTokenizarDocumento():
 #-----------------------------------------------------------------------------------------------------------#
 '''
 Entradas: Se hace clic sobre el boton con la leyenda "Generar HTML"
-Salidas: Una ventana en la que se confirma el proceso de generar el archivo HTML. En caso de que se el usuario
+Salidas: Una ventana en la que se confirma el proceso de generar el archivo HTML. En caso de que el usuario
          presione el botón Si/Yes se realiza una llamada a la funcion para generar el archivo HTML.
-         En caso que ocurra un error se mostrará otro mensaje informadno lo sucedido. 
-Restricciones: validar que se haya tokenizado el texto previamente ingresado.
+         En caso que ocurra un error se mostrará otro mensaje informando lo sucedido. 
+Restricciones: Validar que se haya tokenizado el texto previamente ingresado.
 '''
 def comandoGenerarHTML():
     global txtDocumento
@@ -187,7 +188,7 @@ def comandoAbrirManual():
 #-----------------------------------------------------------------------------------------------------------#
 '''
 Entradas: Ninguna
-Salidas: Se detiene la ejecuccion del programa o de la ventana principal
+Salidas: Se detiene la ejecuccion del programa o de la ventana principal.
 Restricciones: Ninguna
 '''
 def comandoSalir():
