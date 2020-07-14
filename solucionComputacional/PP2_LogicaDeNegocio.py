@@ -247,6 +247,8 @@ def validarCaracteres(cadena, cadenaResultante="", indice=0):
     else:
       if(abcValido.find(cadena[indice])!=-1):
           return validarCaracteres(cadena, cadenaResultante+cadena[indice], indice+1)
+      elif(esNumero(cadenaResultante[-1]) and cadena[indice]=="." and esNumero(cadena[indice+1])):
+          return validarCaracteres(cadena, cadenaResultante+cadena[indice]+cadena[indice+1], indice+2)
       else:
           return validarCaracteres(cadena, cadenaResultante, indice+1)
 
@@ -286,7 +288,7 @@ Restricciones:No valida restricciones
 '''
 def esNumero(caracter):
     try:
-        resultado = int(caracter)
+        resultado = float(caracter)
         return True
     except:
         return False
